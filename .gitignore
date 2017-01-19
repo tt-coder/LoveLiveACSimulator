@@ -1,0 +1,7 @@
+*.sln
+/Library
+/Temp
+/ProjectSettings
+.DS_Store
+*.meta
+/.vscode
