@@ -5,12 +5,12 @@ using UnityEngine;
 public class NoteMove : MonoBehaviour {
 
 	private float gameTime;
-	private float posX,posY,speed = 1;
+	private float posX,posY,speed = 3;
 	public int laneValue;
 
 	void Start () {
 		gameTime = 0;
-		laneValue = 1;
+		//laneValue = 1;
 	}
 	
 	void Update () {
@@ -41,16 +41,16 @@ public class NoteMove : MonoBehaviour {
 				posY = -gameTime * speed + 3.6f;
 				break;
 			case 5:
-				posY = 2.0862f * posX + 3.6f;
+				posY = -2.43103f * posX + 3.6f;
 				break;
 			case 6:
-				posY = 2.0862f * posX + 3.6f;
+				posY = -1.0f * posX + 3.6f;
 				break;
 			case 7:
-				posY = 2.0862f * posX + 3.6f;
+				posY = -0.41844f * posX + 3.6f;
 				break;
 			case 8:
-				posY = 2.0862f * posX + 3.6f;
+				posY = 3.6f;
 				break;
 			default:
 				break;
