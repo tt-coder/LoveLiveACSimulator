@@ -16,19 +16,28 @@ public class NoteCreator : MonoBehaviour {
 	void Update () {
 		timeleft -= Time.deltaTime;
         if (timeleft <= 0.0) {
-            timeleft = 3.0f;
+            timeleft = 1.0f;
+			/*
 			for(int i=0;i<9;i++){
 				createNote(i);
 			}
+			*/
+			createNote();
         }
 	}
-
+	private void createNote(){
+		obj = Instantiate(singleNote);
+		obj.transform.parent = GameObject.Find("NoteParent").transform;
+		obj.transform.position = new Vector3(0,3.6f,0);
+		obj.GetComponent<NoteMove>().laneValue = Random.Range(0,8);
+	}
+	/*
 	private void createNote(int num){
 		obj = Instantiate(singleNote);
 		obj.transform.parent = GameObject.Find("NoteParent").transform;
 		obj.transform.position = new Vector3(0,3.6f,0);
 		//obj.GetComponent<NoteMove>().laneValue = Random.Range(0,8);
 		obj.GetComponent<NoteMove>().laneValue = num;
-	}
+	}*/
 
 }
