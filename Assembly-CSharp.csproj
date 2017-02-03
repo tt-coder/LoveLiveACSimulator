@@ -46,7 +46,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AudioController.cs" />
      <Compile Include="Assets\Scripts\NoteCreator.cs" />
+     <Compile Include="Assets\Scripts\NoteCreator2.cs" />
      <Compile Include="Assets\Scripts\NoteMove.cs" />
      <Compile Include="Assets\Scripts\SingleNote.cs" />
  <Reference Include="UnityEngine.UI">

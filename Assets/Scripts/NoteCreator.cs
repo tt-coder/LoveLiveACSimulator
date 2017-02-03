@@ -10,15 +10,13 @@ public class NoteCreator : MonoBehaviour {
 	public static int[] laneNoteCount = new int[9];
 	public static int[] nextNoteValue = new int[9];
 
-	// Use this for initialization
 	void Start () {
 		for(int i=0;i<9;i++){
 			laneNoteCount[i] = 0;
 			nextNoteValue[i] = 0;
 		}
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		timeleft -= Time.deltaTime;
         if (timeleft <= 0.0) {
