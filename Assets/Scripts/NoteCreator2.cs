@@ -1,13 +1,13 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine;
 
 public class NoteCreator2 : MonoBehaviour {
-    public GameObject[] Note = new GameObject[7]; //生成するノーツのプレハブをインスペクタで指定
+    public GameObject[] noteObj = new GameObject[1]; //生成するノーツのプレハブをインスペクタで指定
     private TextAsset csvFile; // 読み込むCSVファイル
     private List<string[]> csvDatas = new List<string[]>(); // 読み込んだCSVデータのリスト
     private int[,] NumDatas = new int[10000, 8];
@@ -22,30 +22,34 @@ public class NoteCreator2 : MonoBehaviour {
     int NoteType; //ノーツの種類
     int num; //流すレーンに対応するタッチバーの指定
     int num2 = 0;
-    int split;
     int temple = 0; //tmpの間違いな気がする
     int count = 0;
     int k = 0;
-    int i = 0;
+    int i = 0,j;
     int last = 0; //赤い線の行
     private bool isDoubleCreate = false; // 同時押しをすでに生成したかどうか
 
     private float createInterval; // 生成間隔
     private float tmp;
-    private float timer;
-    private float[] notestime = new float[20000]; // ノーツのあるべき時間
-    private bool[] notesbool = new bool[20000]; // ノーツがあるかどうか
+
     private int array;
-    private bool tmpbool;
 
-    private int n;
+    private int n,p,height = 0,lane;
 
-    private GameObject NewNote; // 生成するノーツ用のオブジェクト
+    private GameObject newNote; // 生成するノーツ用のオブジェクト
 
     private AudioSource audioSource;
 
     private int csvHeight = 0;
-    private int measureLine = 0;
+    private int nextMeasure = 0;
+    private int[] measureLine = new int[5000];
+    private int[,] notesData = new int[10000, 9];
+    private float[] notesTime = new float[10000];
+    private bool[] notesExist = new bool[10000];
+    private int noteType;
+    public static int[] laneNoteCount = new int[9];
+	public static int[] nextNoteValue = new int[9];
+    private float gameTime = 0;
 
     void Start() {
         readCSV();
@@ -53,14 +57,18 @@ public class NoteCreator2 : MonoBehaviour {
         
         array = 0;
         n = 0;
-
-        audioSource = gameObject.GetComponent<AudioSource>();
-		audioSource.Play();
+        p = 0;
+        i = 0;
         //UnityEngine.Debug.Log(notestime[0]);
         //UnityEngine.Debug.Log(notestime[1]);
         //UnityEngine.Debug.Log(notestime[2]);
         //UnityEngine.Debug.Log(notestime[3]);
         //UnityEngine.Debug.Log(notestime[4]);
+        Invoke("playAudio",1f);
+    }
+
+    void Update(){
+        notesCreate();
     }
 
     private void readCSV(){
@@ -74,65 +82,81 @@ public class NoteCreator2 : MonoBehaviour {
     }
 
     private void analyzeCSV(){
-        notestime[0] = 0; // 最初のノーツのある時間(曲の開始時刻によってずらす)
-        array = 1;
-        last = 0;
-        n = 0;
+        notesTime[0] = 0;
         int i = 0;
+        p = 1;
         int countNote = 0;
-
         while(true){
-            if(i == measureLine){
-
-            }else if(i != measureLine){
-                
-            }
-        }
-
-        while (true) { //読み込んだCSVを順に見ていく
-            //UnityEngine.Debug.Log(i); // 譜面エラー検出用(何行目がおかしいか検出)
-            if (i == last) { //赤い行なら
-                Bar[count] = i; //n番目の赤い行が何行目かをBar[n]に記録
+            if(i == nextMeasure){
+                if(i == csvHeight) break;
+                measureLine[count] = i;
                 count++;
-                NumDatas[i, 0] = int.Parse(csvDatas[i][0]);
-                if(csvDatas[i][7] == "-1") NumDatas[i, 7] = -1; // 赤い行のときは-1を入れておく
-                //UnityEngine.Debug.Log(csvDatas[i][2]);
-                if (NumDatas[i, 0] == 1000) break; //最終行の1000に当たればwhile文を抜ける
-                NumDatas[i, 1] = int.Parse(csvDatas[i][1]);
-                createInterval = (float)60f / NumDatas[i, 1] * 4 / NumDatas[i, 0] * 1000; // 「60 / bpm * 4 / 小節の分割数」でノーツの生成間隔を計算
-                for (int p = 1; p <= NumDatas[i, 0]; p++) { //赤い行から次の赤い行までのノーツ生成時間の計算
-                    notestime[array] = createInterval + notestime[array - 1]; //array番目のノーツ生成時間
-                    //UnityEngine.Debug.Log(highSpeedTime[array]);
-                    array++;
+                notesData[i,0] = int.Parse(csvDatas[i][0]);
+                if(csvDatas[i][7] == "-1") notesData[i,7] = -1;
+                notesData[i,1] = int.Parse(csvDatas[i][1]);
+                createInterval =  (float)60f / notesData[i, 1] * 4 / notesData[i, 0];
+                for(k=1;k<=notesData[i,0];k++){
+                    notesTime[p] = createInterval + notesTime[p-1];
+                    p++;
                 }
-                last += NumDatas[i, 0] + 1; //次の赤い行 = 赤い行＋小節の分割数＋1
-
-            } else if (i != last) { //赤い線の行以外なら
-                if (NumDatas[i, 0] == 1000) break; //最終行の1000に当たればwhile文を抜ける
-
-                for (int j = 0; j < 8; j++) {
-                    NumDatas[i, j] = int.Parse(csvDatas[i][j]); //csvの情報をそのまま入れる
-                    if (NumDatas[i, j] > 0) {
-                        tmpbool = true; //ノーツがひとつでもあればtrue
-                        countNote ++;
+                nextMeasure += notesData[i,0] + 1;
+            }else if(i != nextMeasure){
+                if(i == csvHeight) break;
+                for(j=0;j<9;j++){
+                    notesData[i,j] = int.Parse(csvDatas[i][j]);
+                    if(notesData[i,j] > 0){
+                        notesExist[i] = true;
+                        countNote++;
                     }
                 }
-                if (tmpbool) { //tmpboolがtrueならi行目にはノーツがある
-                    notesbool[i] = true;
-                    tmpbool = false;
+                i++;
+            }else if(i == csvHeight){
+                break;
+            }
+        }
+
+    }
+
+    private void playAudio(){
+        audioSource = gameObject.GetComponent<AudioSource>();
+		audioSource.Play();
+    }
+
+    private void notesCreate(){
+        gameTime += Time.deltaTime;
+        if(gameTime > notesTime[p]){
+            if(i == measureLine[height]){
+                height++;
+                i++;
+            }
+            for(j=0;j<9;j++){
+                if(notesData[i,j] != 0){
+                    lane = j;
+                    switch(notesData[i,j]){
+                        case 1:
+                            noteType = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                    newNote = Instantiate(noteObj[noteType], new Vector3(0, 3.6f, 0), Quaternion.identity) as GameObject;
+                    newNote.transform.parent = GameObject.Find("NoteParent").transform;
+                    switch(noteType){
+                        case 0:
+                            newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[num];
+                            newNote.GetComponent<NoteMove>().laneValue = lane;
+                            laneNoteCount[num]++;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
-            if (NumDatas[i, 0] == 1000) break; //最終行の1000に当たればwhile文を抜ける
             i++;
+            p++;
         }
     }
-
-
-	/*
-    void Update() {
-        NoteCreate();
-    }
-
+    /*
     private void NoteCreate() { // ノーツ生成関数
 
         //UnityEngine.Debug.Log(i);
@@ -141,62 +165,12 @@ public class NoteCreator2 : MonoBehaviour {
         //UnityEngine.Debug.Log(atomSourceBGM.time);
 
         if (atomSourceBGM.time > notestime[array]) { //BGMの時刻がノーツの生成時刻になったら
-            if (temple == 0) i = 0; // iの初期化
-            if (i == Bar[temple]) { // i行目が赤い行だったら
-                temple++;
-                i++; //赤い行を飛ばす
-            }
-            for (int j = 0; j < 8; j++) {
-                if (NumDatas[i, j] != 0) { //ノーツ番号が0以外ならノーツを生成
-                    //num=Random.Range(0,4);    //流すレーンをランダムで決める
-                    //流すレーンを場合分け
-                    num = j;
-
-                    //ノーツの種類をランダムで決めて生成
-                    //NoteType=Random.Range (0,1);
-                    switch (NumDatas[i, j]) {
-                        case 1: // シングル
-                            NoteType = 0;
-                            break;
-
-                        case 2: // スワイプ
-                            NoteType = 1;
-                            break;
-
-                        case 3: // ロング始点
-                            NoteType = 2;
-                            break;
-
-                        case 4: // ロング終点
-                            NoteType = 3;
-                            break;
-
-                        case 5: // 同時押し
-                            NoteType = 4;
-                            break;
-
-                        case 6: // スライド
-                            NoteType = 5;
-                            break;
-
-                        case 7: // ロング中間
-                            NoteType = 6;
-                            break;
-                        default:
-                            break;
-                    }
-                    if(NoteType != 3){
-                        NewNote = Instantiate(this.Note[NoteType], new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-                    }
                     //UnityEngine.Debug.Log(NoteType);
 
                     switch (NoteType) {
                         case 0:    //シングルの場合
                             noteobjS = NewNote.GetComponent<NoteDesSingle>();
                             noteobjS.BarNum = num; // レーン番号
-                            if(DebugManager.isDebugNoteReverse == true){
-                                noteobjS.BarNum = reverseNotePosition(num);
-                            }
                             break;
 
                         default:

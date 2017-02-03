@@ -19,3 +19,5 @@
 /Users/Tokio/Desktop/LoveLiveACSimulator/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/Tokio/Desktop/LoveLiveACSimulator/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/Tokio/Desktop/LoveLiveACSimulator/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/Tokio/Desktop/LoveLiveACSimulator/Temp/bin/Debug/UnityEngine.Advertisements.dll
+/Users/Tokio/Desktop/LoveLiveACSimulator/Temp/bin/Debug/UnityEngine.Purchasing.dll

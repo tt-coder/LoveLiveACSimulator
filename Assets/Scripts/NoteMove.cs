@@ -25,14 +25,15 @@ public class NoteMove : MonoBehaviour {
 	}
 
 	private void moveNote2(){
-		iTween.MoveTo(gameObject,iTween.Hash("position",new Vector3(idealPosXList[laneValue],idealPosYList[laneValue],0f),"easeType","linear","time",2.0f,"oncomplete","destroyNote"));
+		iTween.MoveTo(gameObject,iTween.Hash("position",new Vector3(idealPosXList[laneValue],idealPosYList[laneValue],0f),"easeType","linear","time",1.0f,"oncomplete","destroyNote"));
 		//iTween.MoveTo(gameObject,iTween.Hash("position",new Vector3(posXList[laneValue],posYList[laneValue],0f),"easeType","linear","time",2.0f,"oncomplete","destroyNote"));
 		iTween.ScaleTo(gameObject,iTween.Hash("x",0.4f,"y",0.4f,"time",1.0f,"easeType","easeOutSine"));
 	}
 
 	private void destroyNote(){
 		Destroy(gameObject);
-		NoteCreator.nextNoteValue[laneValue]++;
+		NoteCreator2.nextNoteValue[laneValue]++;
+		StatusManager.deleteCount++;
 	}
 
 	private void moveNote(){

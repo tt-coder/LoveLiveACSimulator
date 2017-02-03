@@ -29,7 +29,7 @@ public class SingleNote : MonoBehaviour {
 	}
 
 	private void detectionKeyInput(){
-		if(Input.GetKeyDown("a") && lane == 0 &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false){
+		if(Input.GetKeyDown("a") && lane == 0 &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false){
 			distance = Mathf.Sqrt(Mathf.Pow((0 - transform.localPosition.x),2) + Mathf.Pow((3.6f - transform.localPosition.y),2));
 			distanceEval = distance/7.65f;
 			if(distanceEval < 0) distanceEval = 0;
@@ -39,7 +39,7 @@ public class SingleNote : MonoBehaviour {
 			if(isKeyDown == true){
 			isKeyDown = false;
 			Destroy(gameObject);
-			NoteCreator.nextNoteValue[lane]++;
+			NoteCreator2.nextNoteValue[lane]++;
 		}
 		}
 	}
