@@ -8,13 +8,22 @@ public class SingleNote : MonoBehaviour {
 	public int laneIndex;
 	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
+	public float idealTime;
+	private float timeLag;
+	public float perfectArea = 0.04f;
+	public float greatArea = 0.01f;
+	public float goodArea = 0.0166f;
+	public float badArea = 0.0166f;
+	private float nowTime;
 
-	// Use this for initialization
 	void Start () {
+		perfectArea = 0.04f;
+		greatArea = 0.01f;
+		goodArea = 0.0166f;
+		badArea = 0.0166f;
 		lane = GetComponent<NoteMove>().laneValue;
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		setLayer();
 		detectionKeyInput();
@@ -40,19 +49,30 @@ public class SingleNote : MonoBehaviour {
 	}
 
 	private void detectionKeyInput(){
+		float gr = 0.01f;
 		if(Input.GetKeyDown("a") && lane == 0 &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
-			distance = Mathf.Sqrt(Mathf.Pow((0 - transform.localPosition.x),2) + Mathf.Pow((3.6f - transform.localPosition.y),2));
-			distanceEval = distance/7.65f;
-			if(distanceEval < 0) distanceEval = 0;
-			Debug.Log(distanceEval);
+			nowTime = NoteCreator2.gameTime - 2.0f;
+			timeLag = Mathf.Abs(nowTime - idealTime);
+			if(timeLag <= perfectArea){
+				Debug.Log("PERFECT");
+				StatusManager.noteCount[1]++;
+			}else if(timeLag <= perfectArea + greatArea){
+				Debug.Log("GREAT");
+			}else if(timeLag <= perfectArea + greatArea + goodArea){
+				Debug.Log("GOOD");
+			}else if(timeLag <= perfectArea + greatArea + goodArea + badArea){
+				Debug.Log("BAD");
+			}else{
+				Debug.Log("MISS");
+			}
 			isKeyDown = true;
 		}else{
 			if(isKeyDown == true){
-			isKeyDown = false;
-			Destroy(gameObject);
-			NoteCreator2.nextNoteValue[lane]++;
-			StatusManager.deleteCount++;
-		}
+				isKeyDown = false;
+				Destroy(gameObject);
+				NoteCreator2.nextNoteValue[lane]++;
+				StatusManager.noteCount[0]++;
+			}
 		}
 	}
 }

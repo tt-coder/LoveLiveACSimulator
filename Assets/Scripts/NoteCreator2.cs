@@ -34,7 +34,7 @@ public class NoteCreator2 : MonoBehaviour {
     public static int[] laneNoteCount = new int[9];
 	public static int[] nextNoteValue = new int[9];
     private int num = 0;
-    private float gameTime = 0;
+    public static float gameTime = 0;
 
     void Start() {
         readCSV();
@@ -49,7 +49,7 @@ public class NoteCreator2 : MonoBehaviour {
         //UnityEngine.Debug.Log(notestime[2]);
         //UnityEngine.Debug.Log(notestime[3]);
         //UnityEngine.Debug.Log(notestime[4]);
-        Invoke("playAudio",1f);
+        Invoke("playAudio",2f);
     }
 
     void Update(){
@@ -128,7 +128,9 @@ public class NoteCreator2 : MonoBehaviour {
                     newNote.transform.parent = GameObject.Find("NoteParent").transform;
                     switch(noteType){
                         case 0:
+                            newNote.GetComponent<SingleNote>().idealTime = notesTime[p];
                             newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[num];
+                            newNote.GetComponent<NoteMove>().idealTime = notesTime[p];
                             newNote.GetComponent<NoteMove>().laneValue = lane;
                             laneNoteCount[num]++;
                             break;
