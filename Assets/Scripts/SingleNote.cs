@@ -28,8 +28,19 @@ public class SingleNote : MonoBehaviour {
 		}
 	}
 
+	private bool isNoteDistance(){
+		float x = transform.localPosition.x;
+		float y = transform.localPosition.y;
+		float distance = Mathf.Sqrt(Mathf.Pow((0 - transform.localPosition.x),2) + Mathf.Pow((3.6f - transform.localPosition.y),2));
+		if(distance > 3.825f){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	private void detectionKeyInput(){
-		if(Input.GetKeyDown("a") && lane == 0 &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false){
+		if(Input.GetKeyDown("a") && lane == 0 &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
 			distance = Mathf.Sqrt(Mathf.Pow((0 - transform.localPosition.x),2) + Mathf.Pow((3.6f - transform.localPosition.y),2));
 			distanceEval = distance/7.65f;
 			if(distanceEval < 0) distanceEval = 0;
@@ -40,6 +51,7 @@ public class SingleNote : MonoBehaviour {
 			isKeyDown = false;
 			Destroy(gameObject);
 			NoteCreator2.nextNoteValue[lane]++;
+			StatusManager.deleteCount++;
 		}
 		}
 	}

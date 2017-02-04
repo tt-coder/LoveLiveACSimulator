@@ -57,7 +57,7 @@ public class NoteCreator2 : MonoBehaviour {
     }
 
     private void readCSV(){
-        csvFile = Resources.Load("testcsv3") as TextAsset; // Load内はCSVファイルのパス
+        csvFile = Resources.Load("testcsv00") as TextAsset; // Load内はCSVファイルのパス
         StringReader reader = new StringReader(csvFile.text);
         while (reader.Peek() > -1) {
             string line = reader.ReadLine();
