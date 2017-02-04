@@ -10,27 +10,11 @@ public class NoteCreator2 : MonoBehaviour {
     public GameObject[] noteObj = new GameObject[1]; //生成するノーツのプレハブをインスペクタで指定
     private TextAsset csvFile; // 読み込むCSVファイル
     private List<string[]> csvDatas = new List<string[]>(); // 読み込んだCSVデータのリスト
-    private int[,] NumDatas = new int[10000, 8];
-    private int[] Bar = new int[10000];
 
-    float[] posY = new float[8] { 2.0f, 0.0f, -2.0f, -4.0f, 2.0f, 0.0f, -2.0f, -4.0f};//流すレーンのY座標
-
-    public float highspeed;//ハイスピ
-    public float BGMTimelag;
-    //public float waitTime;
-
-    int NoteType; //ノーツの種類
-    int num; //流すレーンに対応するタッチバーの指定
-    int num2 = 0;
-    int temple = 0; //tmpの間違いな気がする
     int count = 0;
     int k = 0;
     int i = 0,j;
-    int last = 0; //赤い線の行
-    private bool isDoubleCreate = false; // 同時押しをすでに生成したかどうか
-
     private float createInterval; // 生成間隔
-    private float tmp;
 
     private int array;
 
@@ -49,6 +33,7 @@ public class NoteCreator2 : MonoBehaviour {
     private int noteType;
     public static int[] laneNoteCount = new int[9];
 	public static int[] nextNoteValue = new int[9];
+    private int num = 0;
     private float gameTime = 0;
 
     void Start() {
@@ -72,7 +57,7 @@ public class NoteCreator2 : MonoBehaviour {
     }
 
     private void readCSV(){
-        csvFile = Resources.Load("testcsv") as TextAsset; // Load内はCSVファイルのパス
+        csvFile = Resources.Load("testcsv3") as TextAsset; // Load内はCSVファイルのパス
         StringReader reader = new StringReader(csvFile.text);
         while (reader.Peek() > -1) {
             string line = reader.ReadLine();
@@ -83,7 +68,7 @@ public class NoteCreator2 : MonoBehaviour {
 
     private void analyzeCSV(){
         notesTime[0] = 0;
-        int i = 0;
+        i = 0;
         p = 1;
         int countNote = 0;
         while(true){
@@ -156,35 +141,5 @@ public class NoteCreator2 : MonoBehaviour {
             p++;
         }
     }
-    /*
-    private void NoteCreate() { // ノーツ生成関数
-
-        //UnityEngine.Debug.Log(i);
-        //UnityEngine.Debug.Log(array);
-        //UnityEngine.Debug.Log(notestime[array]);
-        //UnityEngine.Debug.Log(atomSourceBGM.time);
-
-        if (atomSourceBGM.time > notestime[array]) { //BGMの時刻がノーツの生成時刻になったら
-                    //UnityEngine.Debug.Log(NoteType);
-
-                    switch (NoteType) {
-                        case 0:    //シングルの場合
-                            noteobjS = NewNote.GetComponent<NoteDesSingle>();
-                            noteobjS.BarNum = num; // レーン番号
-                            break;
-
-                        default:
-                            break;
-                    }
-                    if (num2 == k) continue; //←よくわかんない←多分、同時押しを1つすでに読み取ったら2つ目はスキップかと(なんかうまく機能してないっぽい)
-
-                }
-            }
-            isDoubleCreate = false; // 列(横方向)を探索するfor文が終わったら、同時押し生成フラグを初期化
-            i++;
-            array++;
-        }
-    }
-	*/
 
 }
