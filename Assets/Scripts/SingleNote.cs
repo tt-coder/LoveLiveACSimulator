@@ -15,6 +15,10 @@ public class SingleNote : MonoBehaviour {
 	public float goodArea = 0.0166f;
 	public float badArea = 0.0166f;
 	private float nowTime;
+	private float[] effectRingPosX = new float[9] {-7.65f,-7.0677f,-5.4094f,-2.928f,0f,2.928f,5.4094f,7.0677f,7.65f};
+	private float[] effectRingPosY = new float[9] {3.6f,0.672f,-1.809f,-3.468f,-4.05f,-3.468f,-1.809f,0.672f,3.6f};
+	public GameObject judgeEffect;
+	private GameObject judgeEffectObj;
 
 	void Start () {
 		perfectArea = 0.04f;
@@ -49,21 +53,37 @@ public class SingleNote : MonoBehaviour {
 	}
 
 	private void detectionKeyInput(){
-		float gr = 0.01f;
-		if(Input.GetKeyDown("a") && lane == 0 &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
-			nowTime = NoteCreator2.gameTime - 2.0f;
+		
+		nowTime = NoteCreator2.gameTime - 1.0f;
+		if(nowTime >= idealTime){
+			Debug.Log(Mathf.Abs(nowTime - idealTime));
+			Destroy(gameObject);
+			NoteCreator2.nextNoteValue[lane]++;
+			StatusManager.noteCount[0]++;
+			StatusManager.noteCount[1]++;
+		}
+		
+		
+
+		if(Input.GetKeyDown("a") && lane == 2 &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
+			nowTime = NoteCreator2.gameTime - 1.0f;
 			timeLag = Mathf.Abs(nowTime - idealTime);
+			displayJudgeEffect();
 			if(timeLag <= perfectArea){
 				Debug.Log("PERFECT");
 				StatusManager.noteCount[1]++;
 			}else if(timeLag <= perfectArea + greatArea){
 				Debug.Log("GREAT");
+				StatusManager.noteCount[2]++;
 			}else if(timeLag <= perfectArea + greatArea + goodArea){
 				Debug.Log("GOOD");
+				StatusManager.noteCount[3]++;
 			}else if(timeLag <= perfectArea + greatArea + goodArea + badArea){
 				Debug.Log("BAD");
+				StatusManager.noteCount[4]++;
 			}else{
 				Debug.Log("MISS");
+				StatusManager.noteCount[5]++;
 			}
 			isKeyDown = true;
 		}else{
@@ -74,5 +94,10 @@ public class SingleNote : MonoBehaviour {
 				StatusManager.noteCount[0]++;
 			}
 		}
+	}
+
+	private void displayJudgeEffect(){
+		judgeEffectObj = Instantiate(judgeEffect, new Vector3(effectRingPosX[2], effectRingPosY[2], 0), Quaternion.identity) as GameObject;
+		iTween.ScaleTo(judgeEffectObj, iTween.Hash("x",0.4f,"y",0.4f,"time",0.1f,"onComplete","deleteEffect"));
 	}
 }

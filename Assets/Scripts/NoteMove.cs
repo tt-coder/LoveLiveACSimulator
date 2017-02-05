@@ -22,14 +22,14 @@ public class NoteMove : MonoBehaviour {
 	}
 
 	private void moveNote(){
-		//iTween.MoveTo(gameObject,iTween.Hash("position",new Vector3(idealPosXList[laneValue],idealPosYList[laneValue],0f),"easeType","linear","time",1.948f,"oncomplete","destroyNote"));
-		iTween.MoveTo(gameObject,iTween.Hash("position",new Vector3(posXList[laneValue],posYList[laneValue],0f),"easeType","linear","time",2.29176f,"oncomplete","destroyNote"));
-		iTween.ScaleTo(gameObject,iTween.Hash("x",0.4f,"y",0.4f,"time",1.0f,"easeType","easeOutSine"));
+		//iTween.MoveTo(gameObject,iTween.Hash("position",new Vector3(idealPosXList[laneValue],idealPosYList[laneValue],0f),"easeType","linear","time",(1.89f/2.0f),"oncomplete","destroyNote"));
+		iTween.MoveTo(gameObject,iTween.Hash("position",new Vector3(posXList[laneValue],posYList[laneValue],0f),"easeType","linear","time",(2.22353f/2.0f),"oncomplete","destroyNote")); // 2.29176
+		iTween.ScaleTo(gameObject,iTween.Hash("x",0.6f,"y",0.6f,"time",1.0f,"easeType","easeOutSine"));
 	}
 
 	private void destroyNote(){
 		Destroy(gameObject);
-		Debug.Log(Mathf.Abs((NoteCreator2.gameTime - 2.0f) - idealTime));
+		//Debug.Log(Mathf.Abs((NoteCreator2.gameTime - 1.0f) - idealTime));
 		NoteCreator2.nextNoteValue[laneValue]++;
 		StatusManager.noteCount[0]++;
 	}

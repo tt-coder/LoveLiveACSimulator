@@ -23,7 +23,7 @@ public class NoteCreator2 : MonoBehaviour {
     private GameObject newNote; // 生成するノーツ用のオブジェクト
 
     private AudioSource audioSource;
-
+    private AudioClip audioClip;
     private int csvHeight = 0;
     private int nextMeasure = 0;
     private int[] measureLine = new int[5000];
@@ -33,12 +33,16 @@ public class NoteCreator2 : MonoBehaviour {
     private int noteType;
     public static int[] laneNoteCount = new int[9];
 	public static int[] nextNoteValue = new int[9];
-    private int num = 0;
     public static float gameTime = 0;
+    public string csvName;
 
     void Start() {
         readCSV();
         analyzeCSV();
+        for(i=0;i<9;i++){
+			laneNoteCount[i] = 0;
+			nextNoteValue[i] = 0;
+		}
         
         array = 0;
         n = 0;
@@ -49,7 +53,7 @@ public class NoteCreator2 : MonoBehaviour {
         //UnityEngine.Debug.Log(notestime[2]);
         //UnityEngine.Debug.Log(notestime[3]);
         //UnityEngine.Debug.Log(notestime[4]);
-        Invoke("playAudio",2f);
+        Invoke("playAudio",1f);
     }
 
     void Update(){
@@ -57,7 +61,7 @@ public class NoteCreator2 : MonoBehaviour {
     }
 
     private void readCSV(){
-        csvFile = Resources.Load("testcsv00") as TextAsset; // Load内はCSVファイルのパス
+        csvFile = Resources.Load(csvName) as TextAsset; // Load内はCSVファイルのパス
         StringReader reader = new StringReader(csvFile.text);
         while (reader.Peek() > -1) {
             string line = reader.ReadLine();
@@ -105,11 +109,13 @@ public class NoteCreator2 : MonoBehaviour {
     private void playAudio(){
         audioSource = gameObject.GetComponent<AudioSource>();
 		audioSource.Play();
+        audioClip = audioSource.clip;
+        StatusManager.audioLength = audioClip.length;
     }
 
     private void notesCreate(){
         gameTime += Time.deltaTime;
-        if(gameTime > notesTime[p]){
+        if(gameTime >= notesTime[p]){
             if(i == measureLine[height]){
                 height++;
                 i++;
@@ -129,10 +135,10 @@ public class NoteCreator2 : MonoBehaviour {
                     switch(noteType){
                         case 0:
                             newNote.GetComponent<SingleNote>().idealTime = notesTime[p];
-                            newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[num];
+                            newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[lane];
                             newNote.GetComponent<NoteMove>().idealTime = notesTime[p];
                             newNote.GetComponent<NoteMove>().laneValue = lane;
-                            laneNoteCount[num]++;
+                            laneNoteCount[lane]++;
                             break;
                         default:
                             break;
