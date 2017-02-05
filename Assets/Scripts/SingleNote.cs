@@ -30,7 +30,14 @@ public class SingleNote : MonoBehaviour {
 	
 	void Update () {
 		setLayer();
-		detectionKeyInput();
+		//detectionKeyInput();
+		test();
+	}
+
+	private void test(){
+		if(Input.GetKey("f")){
+			Debug.Log("OK");
+		}
 	}
 
 	private void setLayer(){
@@ -52,8 +59,39 @@ public class SingleNote : MonoBehaviour {
 		}
 	}
 
+	private bool keyCheck(){
+		if(Input.GetKeyDown("a") && lane == 0){
+			return true;
+		}
+		if(Input.GetKeyDown("s") && lane == 1){
+			return true;
+		}
+		if(Input.GetKeyDown("d") && lane == 2){
+			return true;
+		}
+		if(Input.GetKeyDown("f") && lane == 3){
+			return true;
+		}
+		if(Input.GetKeyDown("space") && lane == 4){
+			return true;
+		}
+		if(Input.GetKeyDown("h") && lane == 5){
+			return true;
+		}
+		if(Input.GetKeyDown("j") && lane == 6){
+			return true;
+		}
+		if(Input.GetKeyDown("k") && lane == 7){
+			return true;
+		}
+		if(Input.GetKeyDown("l") && lane == 8){
+			return true;
+		}
+		return false;
+	}
+
 	private void detectionKeyInput(){
-		
+		/*
 		nowTime = NoteCreator2.gameTime - 1.0f;
 		if(nowTime >= idealTime){
 			Debug.Log(Mathf.Abs(nowTime - idealTime));
@@ -62,13 +100,10 @@ public class SingleNote : MonoBehaviour {
 			StatusManager.noteCount[0]++;
 			StatusManager.noteCount[1]++;
 		}
-		
-		
-
-		if(Input.GetKeyDown("a") && lane == 2 &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
+		*/
+		if(keyCheck() &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
 			nowTime = NoteCreator2.gameTime - 1.0f;
 			timeLag = Mathf.Abs(nowTime - idealTime);
-			displayJudgeEffect();
 			if(timeLag <= perfectArea){
 				Debug.Log("PERFECT");
 				StatusManager.noteCount[1]++;
@@ -94,6 +129,7 @@ public class SingleNote : MonoBehaviour {
 				StatusManager.noteCount[0]++;
 			}
 		}
+
 	}
 
 	private void displayJudgeEffect(){

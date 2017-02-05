@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class StatusManager : MonoBehaviour {
 
-	public GameObject judge;
+	public GameObject judgeObj;
 	public GameObject comboObj;
 	private Text judgeText;
 	private Text comboText;
@@ -21,16 +21,9 @@ public class StatusManager : MonoBehaviour {
 	}
 
 	void Start () {
-		judgeText = judge.GetComponent<Text>();
+		judgeText = judgeObj.GetComponent<Text>();
 		comboText = comboObj.GetComponent<Text>();
 		audioSe = gameObject.GetComponent<AudioSource>();
-		iTween.ValueTo(gameObject,iTween.Hash("from",1f,"to",0f,"time",0.75f,"onupdate","SetValue"));
-	}
-
-	void SetValue(float alpha) {
-		// iTweenで呼ばれたら、受け取った値をImageのアルファ値にセット
-		judgeText.color = new Color(255,255,255, alpha);
-		
 	}
 	
 	void Update () {
@@ -42,8 +35,11 @@ public class StatusManager : MonoBehaviour {
 		for(int i=0;i<6;i++){
 			if(noteCount[i] > tmpNoteCount[i]){
 				tmpNoteCount[i] = noteCount[i];
-				setCombo(i);
-				playSE(i);
+				if(i != 0){
+					setCombo(i);
+					setJudge(i);
+					playSE(i);
+				}
 			}
 		}
 	}
@@ -59,8 +55,34 @@ public class StatusManager : MonoBehaviour {
 		}
 	}
 
+	private void setJudge(int judge){
+		comboObj.transform.localScale = new Vector3(1,1,0);
+		switch(judge){
+			case 1:
+				judgeText.text = "PERFECT";
+				break;
+			case 2:
+				judgeText.text = "GREAT";
+				break;
+			case 3:
+				judgeText.text = "GOOD";
+				break;
+			case 4:
+				judgeText.text = "BAD";
+				break;
+			case 5:
+				judgeText.text = "MISS";
+				break;
+		}
+		iTween.ScaleTo(judgeObj, iTween.Hash("scale", new Vector3(1.2f, 1.2f, 0), "time", 0.1f, "oncomplete", "endJudgeEffect","oncompletetarget", gameObject));
+	}
+
 	private void endComboEffect() { // 判定用エフェクト終了時の縮小処理
         iTween.ScaleTo(comboObj, iTween.Hash("scale", new Vector3(1.0f, 1.0f, 0), "time", 0.01f, "looptype", "none"));
+    }
+
+	private void endJudgeEffect() { // 判定用エフェクト終了時の縮小処理
+        iTween.ScaleTo(judgeObj, iTween.Hash("scale", new Vector3(0f, 0f, 0), "time", 0.05f, "looptype", "none"));
     }
 
 	private void playSE(int judge){
