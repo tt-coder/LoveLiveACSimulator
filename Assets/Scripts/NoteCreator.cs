@@ -134,10 +134,13 @@ public class NoteCreator : MonoBehaviour {
                         default:
                             break;
                     }
-                    newNote = Instantiate(noteObj[noteType], new Vector3(0, 3.6f, 0), Quaternion.identity) as GameObject;
-                    newNote.transform.parent = GameObject.Find("NoteParent").transform;
+                    if(noteType != 3){ // ロング終点以外のときは生成
+                        newNote = Instantiate(noteObj[noteType], new Vector3(0, 3.6f, 0), Quaternion.identity) as GameObject;
+                        newNote.transform.parent = GameObject.Find("NoteParent").transform;
+                    }
                     switch(noteType){
                         case 0:
+                            UnityEngine.Debug.Log("OK");
                             newNote.GetComponent<SingleNote>().idealTime = notesTime[p];
                             newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[lane];
                             newNote.GetComponent<NoteMove>().idealTime = notesTime[p];
@@ -160,7 +163,6 @@ public class NoteCreator : MonoBehaviour {
                                     tmp++; // 次の行へ
                                 }
                             }
-                            UnityEngine.Debug.Log(lane);
                             newNote.GetComponent<NoteMove>().laneValue = lane;
                             newNote.GetComponent<LongNote>().laneIndex = laneNoteCount[lane];
                             newNote.GetComponent<LongNote>().startTime = longStartTime;
@@ -172,6 +174,8 @@ public class NoteCreator : MonoBehaviour {
                             noteobjL.startTime = longStartTime; // 始点の時刻
                             noteobjL.endTime = longEndTime; // 終点の時刻
                             */
+                            break;
+                        case 3:
                             break;
                         default:
                             break;

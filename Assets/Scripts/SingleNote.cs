@@ -100,6 +100,7 @@ public class SingleNote : MonoBehaviour {
 			NoteCreator.nextNoteValue[lane]++;
 			StatusManager.noteCount[0]++;
 			StatusManager.noteCount[1]++;
+			StatusManager.combo++;
 		}
 
 		if(keyCheck() &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
