@@ -21,8 +21,12 @@ public class LongNote : MonoBehaviour {
 	public GameObject longNoteEnd;
 	private GameObject longStartObj, longEndObj, longLineObj;
 	private LineRenderer longLine;
-	private bool isCreateEnd = false;
 	public float startTime, endTime;
+	private bool isCreateEnd = false;
+	private Vector3 lineStartPos, lineEndPos, lineStartOffset = new Vector3(-0.13f,0,0), lineEndOffset;
+	private float[] lineOffsetX = new float[9] {-0.13f,-0.13f,-0.095f,-0.05f,0,0.05f,0.095f,0.13f,0.13f};
+	private float[] lineOffsetY = new float[9] {0,-0.06f,-0.095f,-0.13f,-0.14f,-0.13f,-0.095f,-0.06f,0};
+	private bool isStartDestroy = false;
 
 	public GameObject judgeEffect;
 	private GameObject judgeEffectObj;
@@ -36,6 +40,8 @@ public class LongNote : MonoBehaviour {
 		longStartObj = transform.FindChild("LongNoteStart").gameObject;
 		createLine();
 		iTween.ScaleTo(longStartObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
+		lineStartPos = gameObject.transform.localPosition;
+		lineEndPos = new Vector3(0f,3.6f,0f);
 	}
 	
 	void Update () {
@@ -44,7 +50,7 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void createLongEnd(){ // 終点の生成と、始点終点間の線の描画
-		if(NoteCreator.gameTime - 1.0f > endTime){ // もし「終点があるべき時間」となったら
+		if(NoteCreator.gameTime >= endTime){ // もし「終点があるべき時間」となったら
 			if(isCreateEnd == false){ // 終点をまだ生成してなかったら
 				longEndObj = Instantiate(longNoteEnd, new Vector3(0, 3.6f, 0), Quaternion.identity) as GameObject; // 終点を生成
 				longEndObj.transform.parent = gameObject.transform; // 親をNoteLongとする
@@ -52,7 +58,7 @@ public class LongNote : MonoBehaviour {
 				isCreateEnd = true; // 終点生成フラグON
 				iTween.ScaleTo(longEndObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
 			}
-			updateLinePosition(longStartObj.transform.position , longEndObj.transform.position ); // 線の描画(始点の座標と終点の座標間に描画)
+			updateLinePosition(lineStartPos , longEndObj.transform.position ); // 線の描画(始点の座標と終点の座標間に描画)
 			//updateLinePosition(longStartObj.transform.position, newEndObj.transform.position); // 線の描画(始点の座標と終点の座標間に描画)
 			/*
             if(isTouching == true){ // タッチされていたら
@@ -66,11 +72,15 @@ public class LongNote : MonoBehaviour {
             }
 			*/
 		}else{ // まだ終点が来てなかったら
-            //if(isTouching == true){ // タッチされていたら
-              //  updateLinePosition(new Vector3(effectPosX[BarNum], posY[BarNum], 0), new Vector3(0, posY[BarNum], 0)); // バーと画面の真ん中間に描画
-            //}else{ // タッチされていなかったら
-                updateLinePosition(longStartObj.transform.position , new Vector3(0, 3.6f, 0)); // 線の描画(始点の座標と画面の真ん中間に描画)
-            //}
+			updateLinePosition(lineStartPos, lineEndPos);
+			/*
+            if(isStartDestroy == true){ // タッチされていたら
+              	updateLinePosition(new Vector3(effectRingPosX[lane], effectRingPosY[lane], 0), new Vector3(0, 3.6f, 0)); // バーと画面の真ん中間に描画
+            }else{ // タッチされていなかったら
+				//updateLinePosition(longStartObj.transform.position , new Vector3(0, 3.6f, 0)); // 線の描画(始点の座標と画面の真ん中間に描画)
+				updateLinePosition(lineStartPos, new Vector3(0, 3.6f, 0));
+            }
+			*/
 		}
 	}
 
@@ -82,14 +92,24 @@ public class LongNote : MonoBehaviour {
 		//longLine.SetColors(Color.red,Color.red); // 色指定
 		//longLine.SetWidth(1.5f,0f); // 幅指定(始点の幅、終点の幅)
 		//longLine.SetVertexCount(2); // 頂点数指定
-		longLine.startWidth = 1.5f;
-		longLine.endWidth = 0f;
+		longLine.startWidth = 1.2f;
+		longLine.endWidth = 0.2f;
 		//updateLineWidth();
 	}
 
 	private void updateLinePosition(Vector3 start, Vector3 end){ // 線の描画(引数：始点の座標、終点の座標)
 		longLine.SetPosition(0, start);
 		longLine.SetPosition(1, end);
+	}
+
+	private void updateLineWidth(){ // 線の幅を時間ごとに変化させる
+		float time = (endTime - startTime)/1000f;
+		iTween.ValueTo(gameObject, iTween.Hash("from",0f, "to",1.2f, "time", time, "onUpdate", "updateWidth"));
+	}
+
+	private void updateWidth(float width){
+		//longLine.SetWidth(1.5f,width);
+		longLine.startWidth = width;
 	}
 
 	
@@ -137,6 +157,31 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void detectionKeyInput(){
+		nowTime = NoteCreator.gameTime - 1.0f;
+		if(nowTime >= startTime){
+			//Debug.Log(Mathf.Abs(nowTime - idealTime));
+			if(isStartDestroy == false){
+				isStartDestroy = true;
+				Destroy(longStartObj);
+				lineStartPos = new Vector3(effectRingPosX[lane],effectRingPosY[lane],0f);
+				NoteCreator.nextNoteValue[lane]++;
+				StatusManager.noteCount[0]++;
+				StatusManager.noteCount[1]++;
+				StatusManager.combo++;
+			}
+		}else{
+			lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
+		}
+
+
+		if(nowTime >= endTime){
+			NoteCreator.nextNoteValue[lane]++;
+			StatusManager.noteCount[0]++;
+			StatusManager.noteCount[1]++;
+			StatusManager.combo++;
+			Destroy(gameObject);
+		}
+
 		
 		if(keyCheck() &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
 			nowTime = NoteCreator.gameTime - 1.0f;
@@ -166,7 +211,7 @@ public class LongNote : MonoBehaviour {
 		}else{
 			if(isKeyDown == true){
 				isKeyDown = false;
-				Destroy(gameObject);
+				//Destroy(gameObject);
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
 			}
