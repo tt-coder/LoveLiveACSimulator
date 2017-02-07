@@ -11,7 +11,8 @@ public class StatusManager : MonoBehaviour {
 	private Text comboText;
 	public static int[] noteCount = new int[6] {0,0,0,0,0,0}; // 全体の消した数、Perfect、Great、Good、Bad，Miss
 	private int[] tmpNoteCount = new int[6] {0,0,0,0,0,0};
-	private int combo = 0;
+	public static int combo = 0;
+	private int tmpCombo = 0;
 	private int tmpDeteleCount = 0;
 	private AudioSource audioSe;
 	public static float audioLength;
@@ -36,11 +37,17 @@ public class StatusManager : MonoBehaviour {
 			if(noteCount[i] > tmpNoteCount[i]){
 				tmpNoteCount[i] = noteCount[i];
 				if(i != 0){
-					setCombo(i);
+					//setCombo(i);
 					setJudge(i);
 					playSE(i);
 				}
 			}
+		}
+		if(combo > tmpCombo){
+			tmpCombo = combo;
+			iTween.ScaleTo(comboObj,iTween.Hash("x",1.2f,"y",1.2f,"time",0.2f,"oncomplete", "endComboEffect","oncompletetarget", gameObject));
+		}else if(combo == 0){
+			tmpCombo = 0;
 		}
 	}
 
@@ -87,6 +94,8 @@ public class StatusManager : MonoBehaviour {
 
 	private void playSE(int judge){
 		switch(judge){
+			case 5:
+				break;
 			default:
 				audioSe.Play();
 				break;

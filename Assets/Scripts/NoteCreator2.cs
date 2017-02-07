@@ -16,8 +16,6 @@ public class NoteCreator2 : MonoBehaviour {
     int i = 0,j;
     private float createInterval; // 生成間隔
 
-    private int array;
-
     private int n,p,height = 0,lane;
 
     private GameObject newNote; // 生成するノーツ用のオブジェクト
@@ -35,6 +33,7 @@ public class NoteCreator2 : MonoBehaviour {
 	public static int[] nextNoteValue = new int[9];
     public static float gameTime = 0;
     public string csvName;
+    private float longStartTime, longEndTime;
 
     void Start() {
         readCSV();
@@ -44,7 +43,6 @@ public class NoteCreator2 : MonoBehaviour {
 			nextNoteValue[i] = 0;
 		}
         
-        array = 0;
         n = 0;
         p = 0;
         i = 0;
@@ -127,6 +125,15 @@ public class NoteCreator2 : MonoBehaviour {
                         case 1:
                             noteType = 0;
                             break;
+                        case 2:
+                            noteType = 1;
+                            break;
+                        case 3:
+                            noteType = 2;
+                            break;
+                        case 4:
+                            noteType = 3;
+                            break;
                         default:
                             break;
                     }
@@ -139,6 +146,32 @@ public class NoteCreator2 : MonoBehaviour {
                             newNote.GetComponent<NoteMove>().idealTime = notesTime[p];
                             newNote.GetComponent<NoteMove>().laneValue = lane;
                             laneNoteCount[lane]++;
+                            break;
+                        case 2: // ロングノーツ始点の場合
+                            longStartTime = notesTime[p]; // 始点の時間
+                            int tmp = i;
+                            int c = 0; // 赤い行が何個あるかカウント
+                            while(true){ // 始点から終点を見つける
+                                if(notesData[tmp,j] == 4){ // 終点が見つかったら
+                                    longEndTime = notesTime[p + (tmp-i-c)]; // 終点の時刻を取得(notestime[]はCSV1行ごとの時間が保存、つまり始点と終点の間の行数から時刻取得)
+                                    break;
+                                }
+                                if(notesData[tmp+1,8] < 0){ // 赤い行のときは
+                                    tmp+=2; // それを飛ばして
+                                    c++; // 赤い行が見つかったのでカウント
+                                }else{ // それ以外なら
+                                    tmp++; // 次の行へ
+                                }
+                            }
+                            /*
+                            noteobjL = newNote.GetComponent<NoteDesLong>(); // ロングノーツ用のアレ(日本語障害)を取得
+                            noteobjL.BarNum = num; // バー番号
+                            if(DebugManager.isDebugNoteReverse == true){
+                                noteobjL.BarNum = reverseNotePosition(num);
+                            }
+                            noteobjL.startTime = longStartTime; // 始点の時刻
+                            noteobjL.endTime = longEndTime; // 終点の時刻
+                            */
                             break;
                         default:
                             break;

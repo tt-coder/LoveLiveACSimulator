@@ -11,9 +11,9 @@ public class SingleNote : MonoBehaviour {
 	public float idealTime;
 	private float timeLag;
 	public float perfectArea = 0.04f;
-	public float greatArea = 0.01f;
-	public float goodArea = 0.0166f;
-	public float badArea = 0.0166f;
+	public float greatArea = 0.0166f;
+	public float goodArea = 0.01f;
+	public float badArea = 0.01f;
 	private float nowTime;
 	private float[] effectRingPosX = new float[9] {-7.65f,-7.0677f,-5.4094f,-2.928f,0f,2.928f,5.4094f,7.0677f,7.65f};
 	private float[] effectRingPosY = new float[9] {3.6f,0.672f,-1.809f,-3.468f,-4.05f,-3.468f,-1.809f,0.672f,3.6f};
@@ -30,8 +30,8 @@ public class SingleNote : MonoBehaviour {
 	
 	void Update () {
 		setLayer();
-		//detectionKeyInput();
-		test();
+		detectionKeyInput();
+		//test();
 	}
 
 	private void test(){
@@ -107,18 +107,23 @@ public class SingleNote : MonoBehaviour {
 			if(timeLag <= perfectArea){
 				Debug.Log("PERFECT");
 				StatusManager.noteCount[1]++;
+				StatusManager.combo++;
 			}else if(timeLag <= perfectArea + greatArea){
 				Debug.Log("GREAT");
 				StatusManager.noteCount[2]++;
+				StatusManager.combo++;
 			}else if(timeLag <= perfectArea + greatArea + goodArea){
 				Debug.Log("GOOD");
 				StatusManager.noteCount[3]++;
+				StatusManager.combo = 0;
 			}else if(timeLag <= perfectArea + greatArea + goodArea + badArea){
 				Debug.Log("BAD");
 				StatusManager.noteCount[4]++;
+				StatusManager.combo = 0;
 			}else{
 				Debug.Log("MISS");
 				StatusManager.noteCount[5]++;
+				StatusManager.combo = 0;
 			}
 			isKeyDown = true;
 		}else{

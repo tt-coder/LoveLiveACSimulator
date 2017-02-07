@@ -32,5 +32,7 @@ public class NoteMove : MonoBehaviour {
 		//Debug.Log(Mathf.Abs((NoteCreator2.gameTime - 1.0f) - idealTime));
 		NoteCreator2.nextNoteValue[laneValue]++;
 		StatusManager.noteCount[0]++;
+		StatusManager.noteCount[5]++;
+		StatusManager.combo = 0;
 	}
 }
