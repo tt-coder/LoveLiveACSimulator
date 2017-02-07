@@ -26,6 +26,7 @@ public class SingleNote : MonoBehaviour {
 		goodArea = 0.0166f;
 		badArea = 0.0166f;
 		lane = GetComponent<NoteMove>().laneValue;
+		iTween.ScaleTo(gameObject,iTween.Hash("x",0.6f,"y",0.6f,"time",1.0f,"easeType","easeOutSine"));
 	}
 	
 	void Update () {
@@ -91,18 +92,18 @@ public class SingleNote : MonoBehaviour {
 	}
 
 	private void detectionKeyInput(){
-		/*
-		nowTime = NoteCreator2.gameTime - 1.0f;
+		
+		nowTime = NoteCreator.gameTime - 1.0f;
 		if(nowTime >= idealTime){
 			Debug.Log(Mathf.Abs(nowTime - idealTime));
 			Destroy(gameObject);
-			NoteCreator2.nextNoteValue[lane]++;
+			NoteCreator.nextNoteValue[lane]++;
 			StatusManager.noteCount[0]++;
 			StatusManager.noteCount[1]++;
 		}
-		*/
-		if(keyCheck() &&  NoteCreator2.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
-			nowTime = NoteCreator2.gameTime - 1.0f;
+
+		if(keyCheck() &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
+			nowTime = NoteCreator.gameTime - 1.0f;
 			timeLag = Mathf.Abs(nowTime - idealTime);
 			if(timeLag <= perfectArea){
 				Debug.Log("PERFECT");
@@ -130,7 +131,7 @@ public class SingleNote : MonoBehaviour {
 			if(isKeyDown == true){
 				isKeyDown = false;
 				Destroy(gameObject);
-				NoteCreator2.nextNoteValue[lane]++;
+				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
 			}
 		}
