@@ -20,13 +20,16 @@ public class LongNote : MonoBehaviour {
 	// 生成関係
 	public GameObject longNoteEnd;
 	private GameObject longStartObj, longEndObj, longLineObj;
-	private LineRenderer longLine;
 	public float startTime, endTime;
 	private bool isCreateEnd = false;
+	private bool isStartDestroy = false;
+
+	// ライン
+	public Material lineMaterial1;
+	private LineRenderer longLine;
 	private Vector3 lineStartPos, lineEndPos, lineStartOffset = new Vector3(-0.13f,0,0), lineEndOffset;
 	private float[] lineOffsetX = new float[9] {-0.13f,-0.13f,-0.095f,-0.05f,0,0.05f,0.095f,0.13f,0.13f};
 	private float[] lineOffsetY = new float[9] {0,-0.06f,-0.095f,-0.13f,-0.14f,-0.13f,-0.095f,-0.06f,0};
-	private bool isStartDestroy = false;
 
 	public GameObject judgeEffect;
 	private GameObject judgeEffectObj;
@@ -42,6 +45,7 @@ public class LongNote : MonoBehaviour {
 		iTween.ScaleTo(longStartObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
 		lineStartPos = gameObject.transform.localPosition;
 		lineEndPos = new Vector3(0f,3.6f,0f);
+		updateLineWidth();
 	}
 	
 	void Update () {
@@ -56,6 +60,7 @@ public class LongNote : MonoBehaviour {
 				longEndObj.transform.parent = gameObject.transform; // 親をNoteLongとする
 				longEndObj.GetComponent<NoteMove>().laneValue = lane;
 				isCreateEnd = true; // 終点生成フラグON
+				updateLineWidth1();
 				iTween.ScaleTo(longEndObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
 			}
 			updateLinePosition(lineStartPos , longEndObj.transform.position ); // 線の描画(始点の座標と終点の座標間に描画)
@@ -89,12 +94,13 @@ public class LongNote : MonoBehaviour {
 		longLineObj.transform.parent = gameObject.transform; // 親をNoteLongとする
 		longLine = new LineRenderer();
 		longLine = longLineObj.AddComponent<LineRenderer>(); // LineRendererをAdd 
+		longLine.material = lineMaterial1;
 		//longLine.SetColors(Color.red,Color.red); // 色指定
 		//longLine.SetWidth(1.5f,0f); // 幅指定(始点の幅、終点の幅)
 		//longLine.SetVertexCount(2); // 頂点数指定
-		longLine.startWidth = 1.2f;
-		longLine.endWidth = 0.2f;
-		//updateLineWidth();
+		longLine.startWidth = 0f;
+		longLine.endWidth = 0f;
+		updateLineWidth();
 	}
 
 	private void updateLinePosition(Vector3 start, Vector3 end){ // 線の描画(引数：始点の座標、終点の座標)
@@ -103,13 +109,23 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void updateLineWidth(){ // 線の幅を時間ごとに変化させる
-		float time = (endTime - startTime)/1000f;
-		iTween.ValueTo(gameObject, iTween.Hash("from",0f, "to",1.2f, "time", time, "onUpdate", "updateWidth"));
+		//float time = endTime - startTime + 0.5f;
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", startTime,"onUpdate", "updateWidth","onupdatetarget", gameObject));
 	}
 
 	private void updateWidth(float width){
 		//longLine.SetWidth(1.5f,width);
 		longLine.startWidth = width;
+	}
+
+	private void updateLineWidth1(){ // 線の幅を時間ごとに変化させる
+		float time = endTime - startTime + 0.5f;
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", 0.6f,"onUpdate", "updateWidth1","onupdatetarget", gameObject));
+	}
+
+	private void updateWidth1(float width){
+		//longLine.SetWidth(1.5f,width);
+		longLine.endWidth = width;
 	}
 
 	

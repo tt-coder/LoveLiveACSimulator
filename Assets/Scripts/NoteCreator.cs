@@ -162,7 +162,6 @@ public class NoteCreator : MonoBehaviour {
                                     tmp++; // 次の行へ
                                 }
                             }
-                            UnityEngine.Debug.Log(longEndTime);
                             newNote.GetComponent<NoteMove>().laneValue = lane;
                             newNote.GetComponent<LongNote>().laneIndex = laneNoteCount[lane];
                             newNote.GetComponent<LongNote>().startTime = longStartTime;
