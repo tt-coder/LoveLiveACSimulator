@@ -17,7 +17,6 @@ public class KeyInputTest : MonoBehaviour {
 		idealKeyBinary |= keyBinary[0];
 		idealKeyBinary |= keyBinary[1];
 		//Debug.Log(idealKeyBinary);
-	
 	}
 
 	void Update () {
