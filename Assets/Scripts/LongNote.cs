@@ -3,34 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LongNote : MonoBehaviour {
-
+	// Common
 	private int lane;
 	public int laneIndexStart,laneIndexEnd;
-	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
-	public float idealTime;
+	private string[] key = new string[9] {"a","s","d","f","space","h","j","k","l"};
+	// 判定
 	private float timeLag;
 	public float perfectArea = 0.04f;
 	public float greatArea = 0.0166f;
 	public float goodArea = 0.01f;
 	public float badArea = 0.01f;
 	private float nowTime;
-	private float[] effectRingPosX = new float[9] {-7.65f,-7.0677f,-5.4094f,-2.928f,0f,2.928f,5.4094f,7.0677f,7.65f};
-	private float[] effectRingPosY = new float[9] {3.6f,0.672f,-1.809f,-3.468f,-4.05f,-3.468f,-1.809f,0.672f,3.6f};
 	// 生成関係
 	public GameObject longNoteEnd;
 	private GameObject longStartObj, longEndObj, longLineObj;
 	public float startTime, endTime;
 	private bool isCreateEnd = false;
 	private bool isStartDestroy = false;
-
 	// ライン
 	public Material lineMaterial1;
 	private LineRenderer longLine;
 	private Vector3 lineStartPos, lineEndPos, lineStartOffset = new Vector3(-0.13f,0,0), lineEndOffset;
 	private float[] lineOffsetX = new float[9] {-0.13f,-0.13f,-0.095f,-0.05f,0,0.05f,0.095f,0.13f,0.13f};
 	private float[] lineOffsetY = new float[9] {0,-0.06f,-0.095f,-0.13f,-0.14f,-0.13f,-0.095f,-0.06f,0};
-
+	// エフェクト
+	private float[] effectRingPosX = new float[9] {-7.65f,-7.0677f,-5.4094f,-2.928f,0f,2.928f,5.4094f,7.0677f,7.65f};
+	private float[] effectRingPosY = new float[9] {3.6f,0.672f,-1.809f,-3.468f,-4.05f,-3.468f,-1.809f,0.672f,3.6f};
 	public GameObject judgeEffect;
 	private GameObject judgeEffectObj;
 
@@ -64,28 +63,8 @@ public class LongNote : MonoBehaviour {
 				iTween.ScaleTo(longEndObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
 			}
 			updateLinePosition(lineStartPos , longEndObj.transform.position ); // 線の描画(始点の座標と終点の座標間に描画)
-			//updateLinePosition(longStartObj.transform.position, newEndObj.transform.position); // 線の描画(始点の座標と終点の座標間に描画)
-			/*
-            if(isTouching == true){ // タッチされていたら
-                if(Math.Abs(longEndObj.transform.position.x) > Math.Abs(effectPosX[BarNum])){ // 終点がタッチバーを越したら、
-                    updateLinePosition(new Vector3(0, posY[BarNum], 0), new Vector3(0, posY[BarNum], 0)); // 中間部分を非常時 
-                }else{ // 終点がタッチバーを越してなかったら
-                    updateLinePosition(new Vector3(effectPosX[BarNum], posY[BarNum], 0), newEndObj.transform.position + new Vector3(iOSValue(BarNum),0,0)); // バーと終点間に描画
-                }
-            }else{ // タッチされていなかったら
-                updateLinePosition(longStartObj.transform.position + new Vector3(iOSValue(BarNum),0,0) , newEndObj.transform.position + new Vector3(iOSValue(BarNum),0,0)); // 線の描画(始点の座標と終点の座標間に描画)
-            }
-			*/
 		}else{ // まだ終点が来てなかったら
 			updateLinePosition(lineStartPos, lineEndPos);
-			/*
-            if(isStartDestroy == true){ // タッチされていたら
-              	updateLinePosition(new Vector3(effectRingPosX[lane], effectRingPosY[lane], 0), new Vector3(0, 3.6f, 0)); // バーと画面の真ん中間に描画
-            }else{ // タッチされていなかったら
-				//updateLinePosition(longStartObj.transform.position , new Vector3(0, 3.6f, 0)); // 線の描画(始点の座標と画面の真ん中間に描画)
-				updateLinePosition(lineStartPos, new Vector3(0, 3.6f, 0));
-            }
-			*/
 		}
 	}
 
@@ -95,9 +74,6 @@ public class LongNote : MonoBehaviour {
 		longLine = new LineRenderer();
 		longLine = longLineObj.AddComponent<LineRenderer>(); // LineRendererをAdd 
 		longLine.material = lineMaterial1;
-		//longLine.SetColors(Color.red,Color.red); // 色指定
-		//longLine.SetWidth(1.5f,0f); // 幅指定(始点の幅、終点の幅)
-		//longLine.SetVertexCount(2); // 頂点数指定
 		longLine.startWidth = 0f;
 		longLine.endWidth = 0f;
 		updateLineWidth();
@@ -109,12 +85,10 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void updateLineWidth(){ // 線の幅を時間ごとに変化させる
-		//float time = endTime - startTime + 0.5f;
 		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", (1.89f/2.0f),"onUpdate", "updateWidth","onupdatetarget", gameObject));
 	}
 
 	private void updateWidth(float width){
-		//longLine.SetWidth(1.5f,width);
 		longLine.startWidth = width;
 	}
 
@@ -124,7 +98,6 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void updateWidth1(float width){
-		//longLine.SetWidth(1.5f,width);
 		longLine.endWidth = width;
 	}
 
@@ -142,77 +115,52 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private bool keyCheck(){
-		if(Input.GetKeyDown("a") && lane == 0){
-			return true;
-		}
-		if(Input.GetKeyDown("s") && lane == 1){
-			return true;
-		}
-		if(Input.GetKeyDown("d") && lane == 2){
-			return true;
-		}
-		if(Input.GetKeyDown("f") && lane == 3){
-			return true;
-		}
-		if(Input.GetKeyDown("space") && lane == 4){
-			return true;
-		}
-		if(Input.GetKeyDown("h") && lane == 5){
-			return true;
-		}
-		if(Input.GetKeyDown("j") && lane == 6){
-			return true;
-		}
-		if(Input.GetKeyDown("k") && lane == 7){
-			return true;
-		}
-		if(Input.GetKeyDown("l") && lane == 8){
-			return true;
+		for(int i=0;i<9;i++){
+			if(Input.GetKey(key[i]) && lane == i){
+				return true;
+			}
 		}
 		return false;
 	}
 
 	private void detectionKeyInput(){
 		nowTime = NoteCreator.gameTime - 1.0f;
-		if(Input.GetKey("h") && NoteCreator.nextNoteValue[lane] == laneIndexStart && isNoteDistance()){ // 始点を押した時の判定
+		if(keyCheck() && NoteCreator.nextNoteValue[lane] == laneIndexStart && isNoteDistance()){ // 始点を押した時の判定
 			if(isStartDestroy == false){ // まだ始点が押されていなかったら
 				isStartDestroy = true;
 				Destroy(longStartObj);
 				lineStartPos = new Vector3(effectRingPosX[lane],effectRingPosY[lane],0f);
-				timeLag = Mathf.Abs(nowTime - startTime);
-				Debug.Log(timeLag);
-				StatusManager.noteCount[1]++;
-				StatusManager.combo++;
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
+				timeLag = Mathf.Abs(nowTime - startTime);
+				judgeTimeLag(timeLag);
 			}
 		}else{
 			if(isStartDestroy == false){ // 始点が押されていないときのラインスタート位置
 				lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
 			}
-			if(Input.GetKey("h") == false && nowTime - (10f/60f) >= startTime && isStartDestroy == false){ // 通り過ぎた時のミス処理
+			if(keyCheck() == false && nowTime - (10f/60f) >= startTime && isStartDestroy == false){ // 通り過ぎた時のミス処理
 				Destroy(gameObject);
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
 				StatusManager.noteCount[5]++;
 				StatusManager.combo = 0;
 			}
-			if(!Input.GetKey("h") && isStartDestroy && isNoteDistance() && NoteCreator.nextNoteValue[lane] == laneIndexEnd){ // 終点で離すときの判定
+			if(!keyCheck() && isStartDestroy && isNoteDistance() && NoteCreator.nextNoteValue[lane] == laneIndexEnd){ // 終点で離すときの判定
 				Destroy(gameObject);
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
-				StatusManager.noteCount[1]++;
-				StatusManager.combo++;
+				timeLag = Mathf.Abs(nowTime - endTime);
+				judgeTimeLag(timeLag);
 			}
 		}
 	}
 
 	private void autoDelete(){
 		nowTime = NoteCreator.gameTime - 1.0f;
-		if(nowTime >= startTime){
-			//Debug.Log(Mathf.Abs(nowTime - idealTime));
+		if(nowTime >= startTime){ // 始点のある時刻となったら
 			if(isStartDestroy == false){
-				isStartDestroy = true;
+				isStartDestroy = true; // 始点を押す
 				Destroy(longStartObj);
 				lineStartPos = new Vector3(effectRingPosX[lane],effectRingPosY[lane],0f);
 				NoteCreator.nextNoteValue[lane]++;
@@ -224,8 +172,7 @@ public class LongNote : MonoBehaviour {
 			lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
 		}
 
-
-		if(nowTime >= endTime){
+		if(nowTime >= endTime){ // 終点のある時刻となったら終点を離す
 			NoteCreator.nextNoteValue[lane]++;
 			StatusManager.noteCount[0]++;
 			StatusManager.noteCount[1]++;
@@ -234,17 +181,17 @@ public class LongNote : MonoBehaviour {
 		}
 	}
 
-	private void judgeTimeLag(float timeLag){
-		if(timeLag <= perfectArea){
+	private void judgeTimeLag(float lag){
+		if(lag <= perfectArea){
 			StatusManager.noteCount[1]++;
 			StatusManager.combo++;
-		}else if(timeLag <= perfectArea + greatArea){
+		}else if(lag <= perfectArea + greatArea){
 			StatusManager.noteCount[2]++;
 			StatusManager.combo++;
-		}else if(timeLag <= perfectArea + greatArea + goodArea){
+		}else if(lag <= perfectArea + greatArea + goodArea){
 			StatusManager.noteCount[3]++;
 			StatusManager.combo = 0;
-		}else if(timeLag <= perfectArea + greatArea + goodArea + badArea){
+		}else if(lag <= perfectArea + greatArea + goodArea + badArea){
 			StatusManager.noteCount[4]++;
 			StatusManager.combo = 0;
 		}else{

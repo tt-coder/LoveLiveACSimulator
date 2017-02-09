@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SingleNote : MonoBehaviour {
-
+	// Common
 	private int lane;
 	public int laneIndex;
 	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
 	private string[] key = new string[9] {"a","s","d","f","space","h","j","k","l"};
-	// 時間関係
+	// 判定
 	public float idealTime;
 	private float timeLag;
 	private float nowTime;
@@ -35,13 +35,6 @@ public class SingleNote : MonoBehaviour {
 	void Update () {
 		setLayer();
 		detectionKeyInput();
-		//test();
-	}
-
-	private void test(){
-		if(Input.GetKey("f")){
-			Debug.Log("OK");
-		}
 	}
 
 	private void setLayer(){
@@ -73,44 +66,12 @@ public class SingleNote : MonoBehaviour {
 	}
 
 	private void detectionKeyInput(){
-		/*
 		nowTime = NoteCreator.gameTime - 1.0f;
-		if(nowTime >= idealTime){
-			Debug.Log(Mathf.Abs(nowTime - idealTime));
-			Destroy(gameObject);
-			NoteCreator.nextNoteValue[lane]++;
-			StatusManager.noteCount[0]++;
-			StatusManager.noteCount[1]++;
-			StatusManager.combo++;
-		}*/
-
 		if(keyCheck() &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
-			nowTime = NoteCreator.gameTime - 1.0f;
 			timeLag = Mathf.Abs(nowTime - idealTime);
-			if(timeLag <= perfectArea){
-				Debug.Log("PERFECT");
-				StatusManager.noteCount[1]++;
-				StatusManager.combo++;
-			}else if(timeLag <= perfectArea + greatArea){
-				Debug.Log("GREAT");
-				StatusManager.noteCount[2]++;
-				StatusManager.combo++;
-			}else if(timeLag <= perfectArea + greatArea + goodArea){
-				Debug.Log("GOOD");
-				StatusManager.noteCount[3]++;
-				StatusManager.combo = 0;
-			}else if(timeLag <= perfectArea + greatArea + goodArea + badArea){
-				Debug.Log("BAD");
-				StatusManager.noteCount[4]++;
-				StatusManager.combo = 0;
-			}else{
-				Debug.Log("MISS");
-				StatusManager.noteCount[5]++;
-				StatusManager.combo = 0;
-			}
+			judgeTimeLag(timeLag);
 			isKeyDown = true;
 		}else{
-			nowTime = NoteCreator.gameTime - 1.0f;
 			if(isKeyDown == true){
 				isKeyDown = false;
 				Destroy(gameObject);
@@ -126,6 +87,38 @@ public class SingleNote : MonoBehaviour {
 			}
 		}
 
+	}
+
+	private void autoDelete(){
+		nowTime = NoteCreator.gameTime - 1.0f;
+		if(nowTime >= idealTime){
+			Debug.Log(Mathf.Abs(nowTime - idealTime));
+			Destroy(gameObject);
+			NoteCreator.nextNoteValue[lane]++;
+			StatusManager.noteCount[0]++;
+			StatusManager.noteCount[1]++;
+			StatusManager.combo++;
+		}
+	}
+
+	private void judgeTimeLag(float lag){
+		if(lag <= perfectArea){
+			StatusManager.noteCount[1]++;
+			StatusManager.combo++;
+		}else if(lag <= perfectArea + greatArea){
+			StatusManager.noteCount[2]++;
+			StatusManager.combo++;
+		}else if(lag <= perfectArea + greatArea + goodArea){
+			StatusManager.noteCount[3]++;
+			StatusManager.combo = 0;
+		}else if(lag <= perfectArea + greatArea + goodArea + badArea){
+			StatusManager.noteCount[4]++;
+			StatusManager.combo = 0;
+		}else{
+			Destroy(gameObject);
+			StatusManager.noteCount[5]++;
+			StatusManager.combo = 0;
+		}
 	}
 
 	private void displayJudgeEffect(){
