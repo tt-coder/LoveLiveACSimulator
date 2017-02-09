@@ -30,6 +30,7 @@ public class StatusManager : MonoBehaviour {
 	void Update () {
 		checkNoteCount();
 		displayStatus();
+		GameObject.Find("Debug").GetComponent<Text>().text = NoteCreator.laneNoteCount[0] + "  " + NoteCreator.nextNoteValue[0].ToString();
 	}
 
 	private void checkNoteCount(){

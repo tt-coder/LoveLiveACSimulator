@@ -134,7 +134,7 @@ public class LongNote : MonoBehaviour {
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
 				timeLag = Mathf.Abs(nowTime - startTime);
-				judgeTimeLag(timeLag);
+				judgeTimeLag(timeLag, "start");
 			}
 		}else{
 			if(isStartDestroy == false){ // 始点が押されていないときのラインスタート位置
@@ -152,7 +152,7 @@ public class LongNote : MonoBehaviour {
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
 				timeLag = Mathf.Abs(nowTime - endTime);
-				judgeTimeLag(timeLag);
+				judgeTimeLag(timeLag,"end");
 			}
 		}
 	}
@@ -182,7 +182,7 @@ public class LongNote : MonoBehaviour {
 		}
 	}
 
-	private void judgeTimeLag(float lag){
+	private void judgeTimeLag(float lag, string s){
 		if(lag <= perfectArea){
 			StatusManager.noteCount[1]++;
 			StatusManager.combo++;
@@ -196,6 +196,9 @@ public class LongNote : MonoBehaviour {
 			StatusManager.noteCount[4]++;
 			StatusManager.combo = 0;
 		}else{
+			if(s == "start"){
+				NoteCreator.nextNoteValue[lane]++;
+			}
 			Destroy(gameObject);
 			StatusManager.noteCount[5]++;
 			StatusManager.combo = 0;

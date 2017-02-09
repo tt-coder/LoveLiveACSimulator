@@ -9,6 +9,9 @@ public class SingleNote : MonoBehaviour {
 	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
 	private string[] key = new string[9] {"a","s","d","f","space","h","j","k","l"};
+	public bool isSameNote = false;
+	public int noteImageValue = 0;
+	public Sprite noteImageBlue,noteImageOrange;
 	// 判定
 	public float idealTime;
 	private float timeLag;
@@ -30,6 +33,14 @@ public class SingleNote : MonoBehaviour {
 		badArea = 0.0166f;
 		lane = GetComponent<NoteMove>().laneValue;
 		iTween.ScaleTo(gameObject,iTween.Hash("x",0.6f,"y",0.6f,"time",1.0f,"easeType","easeOutSine"));
+
+		if(isSameNote){
+			if(noteImageValue == 0){
+				gameObject.GetComponent<SpriteRenderer>().sprite = noteImageBlue;
+			}else{
+				gameObject.GetComponent<SpriteRenderer>().sprite = noteImageOrange;
+			}
+		}
 	}
 	
 	void Update () {
@@ -71,6 +82,7 @@ public class SingleNote : MonoBehaviour {
 		if(keyCheck() &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
 			timeLag = Mathf.Abs(nowTime - idealTime);
 			judgeTimeLag(timeLag);
+			//NoteCreator.nextNoteValue[lane]++;
 			isKeyDown = true;
 		}else{
 			if(isKeyDown == true){
@@ -115,7 +127,7 @@ public class SingleNote : MonoBehaviour {
 			StatusManager.noteCount[4]++;
 			StatusManager.combo = 0;
 		}else{
-			Destroy(gameObject);
+			//Destroy(gameObject);
 			StatusManager.noteCount[5]++;
 			StatusManager.combo = 0;
 		}

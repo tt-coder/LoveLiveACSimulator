@@ -31,7 +31,7 @@ public class NoteCreator : MonoBehaviour {
     public static float gameTime = 0;
     public string csvName;
     private float longStartTime, longEndTime;
-    private bool noteImageBool = false;
+    private int noteImageValue = 0;
     private bool detectSame = false;
 
     void Start() {
@@ -41,7 +41,7 @@ public class NoteCreator : MonoBehaviour {
 			laneNoteCount[i] = 0;
 			nextNoteValue[i] = 0;
 		}
-        noteImageBool = false;
+        noteImageValue = 0;
         n = 0;
         p = 0;
         i = 0;
@@ -151,9 +151,10 @@ public class NoteCreator : MonoBehaviour {
                             laneNoteCount[lane]++;
                             break;
                         case 1:
-                            newNote.GetComponent<SameNote>().idealTime = notesTime[p];
-                            newNote.GetComponent<SameNote>().laneIndex = laneNoteCount[lane];
-                            newNote.GetComponent<SameNote>().noteImage = noteImageBool;
+                            newNote.GetComponent<SingleNote>().idealTime = notesTime[p];
+                            newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[lane];
+                            newNote.GetComponent<SingleNote>().isSameNote = detectSame;
+                            newNote.GetComponent<SingleNote>().noteImageValue = noteImageValue;
                             newNote.GetComponent<NoteMove>().idealTime = notesTime[p];
                             newNote.GetComponent<NoteMove>().laneValue = lane;
                             laneNoteCount[lane]++;
@@ -196,10 +197,10 @@ public class NoteCreator : MonoBehaviour {
                 }
             }
             if(detectSame){
-                if(noteImageBool == false){
-                    noteImageBool = true;
+                if(noteImageValue == 0){
+                    noteImageValue = 1;
                 }else{
-                    noteImageBool = false;
+                    noteImageValue = 0;
                 }
                 detectSame = false;
             }
