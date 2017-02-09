@@ -146,6 +146,13 @@ public class NoteCreator : MonoBehaviour {
                             newNote.GetComponent<NoteMove>().laneValue = lane;
                             laneNoteCount[lane]++;
                             break;
+                        case 1:
+                            newNote.GetComponent<SingleNote>().idealTime = notesTime[p];
+                            newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[lane];
+                            newNote.GetComponent<NoteMove>().idealTime = notesTime[p];
+                            newNote.GetComponent<NoteMove>().laneValue = lane;
+                            laneNoteCount[lane]++;
+                            break;
                         case 2: // ロングノーツ始点の場合
                             longStartTime = notesTime[p]; // 始点の時間                        
                             int tmp = i;

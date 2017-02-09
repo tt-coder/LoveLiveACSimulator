@@ -48,7 +48,8 @@ public class LongNote : MonoBehaviour {
 	}
 	
 	void Update () {
-		detectionKeyInput();
+		autoDelete();
+		//detectionKeyInput();
 		createLongEnd();
 	}
 
@@ -85,7 +86,7 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void updateLineWidth(){ // 線の幅を時間ごとに変化させる
-		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", (1.89f/2.0f),"onUpdate", "updateWidth","onupdatetarget", gameObject));
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", (1.5f/2.0f),"onUpdate", "updateWidth","onupdatetarget", gameObject));
 	}
 
 	private void updateWidth(float width){

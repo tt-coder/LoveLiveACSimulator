@@ -34,7 +34,8 @@ public class SingleNote : MonoBehaviour {
 	
 	void Update () {
 		setLayer();
-		detectionKeyInput();
+		autoDelete();
+		//detectionKeyInput();
 	}
 
 	private void setLayer(){
@@ -92,7 +93,6 @@ public class SingleNote : MonoBehaviour {
 	private void autoDelete(){
 		nowTime = NoteCreator.gameTime - 1.0f;
 		if(nowTime >= idealTime){
-			Debug.Log(Mathf.Abs(nowTime - idealTime));
 			Destroy(gameObject);
 			NoteCreator.nextNoteValue[lane]++;
 			StatusManager.noteCount[0]++;
