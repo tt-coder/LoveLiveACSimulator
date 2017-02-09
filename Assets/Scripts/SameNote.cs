@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SingleNote : MonoBehaviour {
+public class SameNote : MonoBehaviour {
 	// Common
 	private int lane;
 	public int laneIndex;
 	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
 	private string[] key = new string[9] {"a","s","d","f","space","h","j","k","l"};
+	public bool noteImage;
+	public Sprite noteImageBlue;
+	public Sprite noteImageOrange;
 	// 判定
 	public float idealTime;
 	private float timeLag;
@@ -30,6 +33,11 @@ public class SingleNote : MonoBehaviour {
 		badArea = 0.0166f;
 		lane = GetComponent<NoteMove>().laneValue;
 		iTween.ScaleTo(gameObject,iTween.Hash("x",0.6f,"y",0.6f,"time",1.0f,"easeType","easeOutSine"));
+		if(!noteImage){
+			gameObject.GetComponent<SpriteRenderer>().sprite = noteImageBlue;
+		}else{
+			gameObject.GetComponent<SpriteRenderer>().sprite = noteImageOrange;
+		}
 	}
 	
 	void Update () {

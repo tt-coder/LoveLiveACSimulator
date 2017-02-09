@@ -48,8 +48,8 @@ public class LongNote : MonoBehaviour {
 	}
 	
 	void Update () {
-		autoDelete();
-		//detectionKeyInput();
+		//autoDelete();
+		detectionKeyInput();
 		createLongEnd();
 	}
 
@@ -140,9 +140,9 @@ public class LongNote : MonoBehaviour {
 			if(isStartDestroy == false){ // 始点が押されていないときのラインスタート位置
 				lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
 			}
-			if(keyCheck() == false && nowTime - (10f/60f) >= startTime && isStartDestroy == false){ // 通り過ぎた時のミス処理
+			if(!keyCheck() && nowTime - (10f/60f) >= startTime && isStartDestroy == false){ // 通り過ぎた時のミス処理
 				Destroy(gameObject);
-				NoteCreator.nextNoteValue[lane]++;
+				NoteCreator.nextNoteValue[lane]+=2; // 始点と終点の分
 				StatusManager.noteCount[0]++;
 				StatusManager.noteCount[5]++;
 				StatusManager.combo = 0;

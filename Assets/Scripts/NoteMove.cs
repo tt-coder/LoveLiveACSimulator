@@ -31,10 +31,12 @@ public class NoteMove : MonoBehaviour {
 		//Destroy(gameObject);
 		//Debug.Log(Mathf.Abs((NoteCreator.gameTime - 1.0f) - idealTime));
 		//NoteCreator.nextNoteValue[laneValue]++;
+		/*
 		if(gameObject.name != "LongNote(Clone)"){
 			StatusManager.noteCount[0]++;
 			StatusManager.noteCount[5]++;
 			StatusManager.combo = 0;
 		}
+		*/
 	}
 }

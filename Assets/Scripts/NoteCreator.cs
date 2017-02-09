@@ -31,6 +31,8 @@ public class NoteCreator : MonoBehaviour {
     public static float gameTime = 0;
     public string csvName;
     private float longStartTime, longEndTime;
+    private bool noteImageBool = false;
+    private bool detectSame = false;
 
     void Start() {
         readCSV();
@@ -39,7 +41,7 @@ public class NoteCreator : MonoBehaviour {
 			laneNoteCount[i] = 0;
 			nextNoteValue[i] = 0;
 		}
-        
+        noteImageBool = false;
         n = 0;
         p = 0;
         i = 0;
@@ -103,6 +105,7 @@ public class NoteCreator : MonoBehaviour {
 
     private void playAudio(){
         audioSource = gameObject.GetComponent<AudioSource>();
+        //audioSource.time = 2.1f;
 		audioSource.Play();
         audioClip = audioSource.clip;
         StatusManager.audioLength = audioClip.length;
@@ -124,6 +127,7 @@ public class NoteCreator : MonoBehaviour {
                             break;
                         case 2:
                             noteType = 1;
+                            detectSame = true;
                             break;
                         case 3:
                             noteType = 2;
@@ -147,8 +151,9 @@ public class NoteCreator : MonoBehaviour {
                             laneNoteCount[lane]++;
                             break;
                         case 1:
-                            newNote.GetComponent<SingleNote>().idealTime = notesTime[p];
-                            newNote.GetComponent<SingleNote>().laneIndex = laneNoteCount[lane];
+                            newNote.GetComponent<SameNote>().idealTime = notesTime[p];
+                            newNote.GetComponent<SameNote>().laneIndex = laneNoteCount[lane];
+                            newNote.GetComponent<SameNote>().noteImage = noteImageBool;
                             newNote.GetComponent<NoteMove>().idealTime = notesTime[p];
                             newNote.GetComponent<NoteMove>().laneValue = lane;
                             laneNoteCount[lane]++;
@@ -189,6 +194,14 @@ public class NoteCreator : MonoBehaviour {
                             break;
                     }
                 }
+            }
+            if(detectSame){
+                if(noteImageBool == false){
+                    noteImageBool = true;
+                }else{
+                    noteImageBool = false;
+                }
+                detectSame = false;
             }
             i++;
             p++;
