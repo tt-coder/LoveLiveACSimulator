@@ -30,7 +30,7 @@ public class NoteMove : MonoBehaviour {
 	private void destroyNote(){
 		//Destroy(gameObject);
 		//Debug.Log(Mathf.Abs((NoteCreator.gameTime - 1.0f) - idealTime));
-		NoteCreator.nextNoteValue[laneValue]++;
+		//NoteCreator.nextNoteValue[laneValue]++;
 		if(gameObject.name != "LongNote(Clone)"){
 			StatusManager.noteCount[0]++;
 			StatusManager.noteCount[5]++;

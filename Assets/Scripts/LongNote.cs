@@ -5,7 +5,7 @@ using UnityEngine;
 public class LongNote : MonoBehaviour {
 
 	private int lane;
-	public int laneIndex;
+	public int laneIndexStart,laneIndexEnd;
 	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
 	public float idealTime;
@@ -110,7 +110,7 @@ public class LongNote : MonoBehaviour {
 
 	private void updateLineWidth(){ // 線の幅を時間ごとに変化させる
 		//float time = endTime - startTime + 0.5f;
-		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", startTime,"onUpdate", "updateWidth","onupdatetarget", gameObject));
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", (1.89f/2.0f),"onUpdate", "updateWidth","onupdatetarget", gameObject));
 	}
 
 	private void updateWidth(float width){
@@ -174,6 +174,41 @@ public class LongNote : MonoBehaviour {
 
 	private void detectionKeyInput(){
 		nowTime = NoteCreator.gameTime - 1.0f;
+		if(Input.GetKey("h") && NoteCreator.nextNoteValue[lane] == laneIndexStart && isNoteDistance()){ // 始点を押した時の判定
+			if(isStartDestroy == false){ // まだ始点が押されていなかったら
+				isStartDestroy = true;
+				Destroy(longStartObj);
+				lineStartPos = new Vector3(effectRingPosX[lane],effectRingPosY[lane],0f);
+				timeLag = Mathf.Abs(nowTime - startTime);
+				Debug.Log(timeLag);
+				StatusManager.noteCount[1]++;
+				StatusManager.combo++;
+				NoteCreator.nextNoteValue[lane]++;
+				StatusManager.noteCount[0]++;
+			}
+		}else{
+			if(isStartDestroy == false){ // 始点が押されていないときのラインスタート位置
+				lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
+			}
+			if(Input.GetKey("h") == false && nowTime - (10f/60f) >= startTime && isStartDestroy == false){ // 通り過ぎた時のミス処理
+				Destroy(gameObject);
+				NoteCreator.nextNoteValue[lane]++;
+				StatusManager.noteCount[0]++;
+				StatusManager.noteCount[5]++;
+				StatusManager.combo = 0;
+			}
+			if(!Input.GetKey("h") && isStartDestroy && isNoteDistance() && NoteCreator.nextNoteValue[lane] == laneIndexEnd){ // 終点で離すときの判定
+				Destroy(gameObject);
+				NoteCreator.nextNoteValue[lane]++;
+				StatusManager.noteCount[0]++;
+				StatusManager.noteCount[1]++;
+				StatusManager.combo++;
+			}
+		}
+	}
+
+	private void autoDelete(){
+		nowTime = NoteCreator.gameTime - 1.0f;
 		if(nowTime >= startTime){
 			//Debug.Log(Mathf.Abs(nowTime - idealTime));
 			if(isStartDestroy == false){
@@ -197,42 +232,26 @@ public class LongNote : MonoBehaviour {
 			StatusManager.combo++;
 			Destroy(gameObject);
 		}
+	}
 
-		
-		if(keyCheck() &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
-			nowTime = NoteCreator.gameTime - 1.0f;
-			timeLag = Mathf.Abs(nowTime - idealTime);
-			if(timeLag <= perfectArea){
-				Debug.Log("PERFECT");
-				StatusManager.noteCount[1]++;
-				StatusManager.combo++;
-			}else if(timeLag <= perfectArea + greatArea){
-				Debug.Log("GREAT");
-				StatusManager.noteCount[2]++;
-				StatusManager.combo++;
-			}else if(timeLag <= perfectArea + greatArea + goodArea){
-				Debug.Log("GOOD");
-				StatusManager.noteCount[3]++;
-				StatusManager.combo = 0;
-			}else if(timeLag <= perfectArea + greatArea + goodArea + badArea){
-				Debug.Log("BAD");
-				StatusManager.noteCount[4]++;
-				StatusManager.combo = 0;
-			}else{
-				Debug.Log("MISS");
-				StatusManager.noteCount[5]++;
-				StatusManager.combo = 0;
-			}
-			isKeyDown = true;
+	private void judgeTimeLag(float timeLag){
+		if(timeLag <= perfectArea){
+			StatusManager.noteCount[1]++;
+			StatusManager.combo++;
+		}else if(timeLag <= perfectArea + greatArea){
+			StatusManager.noteCount[2]++;
+			StatusManager.combo++;
+		}else if(timeLag <= perfectArea + greatArea + goodArea){
+			StatusManager.noteCount[3]++;
+			StatusManager.combo = 0;
+		}else if(timeLag <= perfectArea + greatArea + goodArea + badArea){
+			StatusManager.noteCount[4]++;
+			StatusManager.combo = 0;
 		}else{
-			if(isKeyDown == true){
-				isKeyDown = false;
-				//Destroy(gameObject);
-				NoteCreator.nextNoteValue[lane]++;
-				StatusManager.noteCount[0]++;
-			}
+			Destroy(gameObject);
+			StatusManager.noteCount[5]++;
+			StatusManager.combo = 0;
 		}
-
 	}
 
 	private void displayJudgeEffect(){

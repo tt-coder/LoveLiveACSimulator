@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UniRx;
+using UniRx.Triggers;
 
 public class KeyInputTest : MonoBehaviour {
 	private GameObject[] button = new GameObject[9];
 	//private string[] key = new string[9] {"a","s","d","f"," ","h","j","k","l"};
 	//private int[] keyBuffer = new int[9] {0,0,0,0,0,0,0,0,0};
 	private int keyBuffer = 1000000000;
+	private int checkBuffer = 1000000000;
+	private int[] buffer = new int[16];
 	private int idealKeyBinary = 1000000000;
 	protected int[] keyBinary = new int[9] {1000000001,1000000010,1000000100,1000001000,1000010000,1000100000,1001000000,1010000000,1100000000};
-	
 	void Start () {
 		for(int i=0;i<9;i++){
 			button[i] = GameObject.Find("Button" + (i+1).ToString());
@@ -20,16 +24,43 @@ public class KeyInputTest : MonoBehaviour {
 	}
 
 	void Update () {
+		for(int i = 15;i>0;i--){
+			buffer[i] = buffer[i-1];
+		}
+		buffer[0] = 1000000000;
 		//detectionKeyInput();
 		keyTest();
+		keyCheck();
+		//Debug.Log(keyCheck());
 	}
 
 	void keyTest(){
 		if(Input.GetKeyDown("a")){
-			keyBuffer |= keyBinary[0];
-			Debug.Log(keyBuffer);
+			buffer[0] |= keyBinary[0];
 		}
+		if(Input.GetKeyDown("s")){
+			buffer[0] |= keyBinary[1];
+		}
+		//buffer[0] |= 1000000000;
 		//Debug.Log(keyBinary[0] |= keyBinary[1]);
+	}
+
+	bool keyCheck(){
+		for(int i=0;i<2;i++){
+			checkBuffer |= buffer[i];
+		}
+		if(checkBuffer == idealKeyBinary){
+			changeColor(0,true);
+			changeColor(1,true);
+			checkBuffer = 1000000000;
+			Debug.Log("OK");
+			return true;
+		}else{
+			changeColor(0,false);
+			changeColor(1,false);
+			checkBuffer = 1000000000;
+			return false;
+		}
 	}
 
 	void detectionKeyInput(){

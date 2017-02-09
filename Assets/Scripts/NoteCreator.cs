@@ -163,10 +163,12 @@ public class NoteCreator : MonoBehaviour {
                                 }
                             }
                             newNote.GetComponent<NoteMove>().laneValue = lane;
-                            newNote.GetComponent<LongNote>().laneIndex = laneNoteCount[lane];
+                            newNote.GetComponent<LongNote>().laneIndexStart = laneNoteCount[lane];
+                            laneNoteCount[lane]++;
+                            newNote.GetComponent<LongNote>().laneIndexEnd = laneNoteCount[lane];
+                            laneNoteCount[lane]++;
                             newNote.GetComponent<LongNote>().startTime = longStartTime;
                             newNote.GetComponent<LongNote>().endTime = longEndTime;
-
                             /*
                             noteobjL = newNote.GetComponent<NoteDesLong>(); // ロングノーツ用のアレ(日本語障害)を取得
                             noteobjL.BarNum = num; // バー番号

@@ -8,13 +8,16 @@ public class SingleNote : MonoBehaviour {
 	public int laneIndex;
 	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
+	private string[] key = new string[9] {"a","s","d","f","space","h","j","k","l"};
+	// 時間関係
 	public float idealTime;
 	private float timeLag;
+	private float nowTime;
 	public float perfectArea = 0.04f;
 	public float greatArea = 0.0166f;
 	public float goodArea = 0.01f;
 	public float badArea = 0.01f;
-	private float nowTime;
+	// エフェクト
 	private float[] effectRingPosX = new float[9] {-7.65f,-7.0677f,-5.4094f,-2.928f,0f,2.928f,5.4094f,7.0677f,7.65f};
 	private float[] effectRingPosY = new float[9] {3.6f,0.672f,-1.809f,-3.468f,-4.05f,-3.468f,-1.809f,0.672f,3.6f};
 	public GameObject judgeEffect;
@@ -61,38 +64,16 @@ public class SingleNote : MonoBehaviour {
 	}
 
 	private bool keyCheck(){
-		if(Input.GetKeyDown("a") && lane == 0){
-			return true;
-		}
-		if(Input.GetKeyDown("s") && lane == 1){
-			return true;
-		}
-		if(Input.GetKeyDown("d") && lane == 2){
-			return true;
-		}
-		if(Input.GetKeyDown("f") && lane == 3){
-			return true;
-		}
-		if(Input.GetKeyDown("space") && lane == 4){
-			return true;
-		}
-		if(Input.GetKeyDown("h") && lane == 5){
-			return true;
-		}
-		if(Input.GetKeyDown("j") && lane == 6){
-			return true;
-		}
-		if(Input.GetKeyDown("k") && lane == 7){
-			return true;
-		}
-		if(Input.GetKeyDown("l") && lane == 8){
-			return true;
+		for(int i=0;i<9;i++){
+			if(Input.GetKeyDown(key[i]) && lane == i){
+				return true;
+			}
 		}
 		return false;
 	}
 
 	private void detectionKeyInput(){
-		
+		/*
 		nowTime = NoteCreator.gameTime - 1.0f;
 		if(nowTime >= idealTime){
 			Debug.Log(Mathf.Abs(nowTime - idealTime));
@@ -101,7 +82,7 @@ public class SingleNote : MonoBehaviour {
 			StatusManager.noteCount[0]++;
 			StatusManager.noteCount[1]++;
 			StatusManager.combo++;
-		}
+		}*/
 
 		if(keyCheck() &&  NoteCreator.nextNoteValue[lane] == laneIndex && isKeyDown == false && isNoteDistance()){
 			nowTime = NoteCreator.gameTime - 1.0f;
@@ -129,11 +110,19 @@ public class SingleNote : MonoBehaviour {
 			}
 			isKeyDown = true;
 		}else{
+			nowTime = NoteCreator.gameTime - 1.0f;
 			if(isKeyDown == true){
 				isKeyDown = false;
 				Destroy(gameObject);
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
+			}
+			if(nowTime - (10f/60f) >= idealTime){
+				Destroy(gameObject);
+				NoteCreator.nextNoteValue[lane]++;
+				StatusManager.noteCount[0]++;
+				StatusManager.noteCount[5]++;
+				StatusManager.combo = 0;
 			}
 		}
 
