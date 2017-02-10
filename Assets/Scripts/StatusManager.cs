@@ -14,6 +14,8 @@ public class StatusManager : MonoBehaviour {
 	public static int combo = 0;
 	private int tmpCombo = 0;
 	private int tmpDeteleCount = 0;
+	// サウンド
+	private AudioClip audioClip;
 	private AudioSource audioSe;
 	public static float audioLength;
 
@@ -98,7 +100,9 @@ public class StatusManager : MonoBehaviour {
 			case 5:
 				break;
 			default:
-				audioSe.Play();
+				//audioSe.Play();
+				audioClip = audioSe.clip;
+				audioSe.PlayOneShot(audioClip,1.0f);
 				break;
 		}
 	}
