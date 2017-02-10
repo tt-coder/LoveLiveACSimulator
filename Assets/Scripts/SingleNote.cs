@@ -8,6 +8,7 @@ public class SingleNote : MonoBehaviour {
 	public int laneIndex;
 	private bool isKeyDown = false;
 	private float posX,posY,distance,distanceEval;
+	private float transTime;
 	private string[] key = new string[9] {"a","s","d","f","space","h","j","k","l"};
 	public bool isSameNote = false;
 	public int noteImageValue = 0;
@@ -32,9 +33,9 @@ public class SingleNote : MonoBehaviour {
 		goodArea = 0.0166f;
 		badArea = 0.0166f;
 		lane = GetComponent<NoteMove>().laneValue;
-		float time = idealTime - NoteCreator.gameTime + 1.0f;
+		transTime = idealTime - NoteCreator.gameTime + 1.0f;
 		//iTween.ScaleTo(gameObject,iTween.Hash("x",0.6f,"y",0.6f,"time",0.6f,"easeType","easeOutSine"));
-		iTween.ScaleTo(gameObject,iTween.Hash("x",0.6f,"y",0.6f,"time",time,"easeType","easeOutSine"));
+		iTween.ScaleTo(gameObject,iTween.Hash("x",0.6f,"y",0.6f,"time",transTime,"easeType","easeOutSine"));
 
 		if(isSameNote){
 			if(noteImageValue == 0){

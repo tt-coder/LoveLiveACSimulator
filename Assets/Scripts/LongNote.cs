@@ -8,6 +8,7 @@ public class LongNote : MonoBehaviour {
 	private int lane;
 	public int laneIndexStart,laneIndexEnd;
 	private float posX,posY,distance,distanceEval;
+	private float transTime;
 	private string[] key = new string[9] {"a","s","d","f","space","h","j","k","l"};
 	// 判定
 	private float timeLag;
@@ -42,7 +43,8 @@ public class LongNote : MonoBehaviour {
 		lane = GetComponent<NoteMove>().laneValue;
 		longStartObj = transform.FindChild("LongNoteStart").gameObject;
 		createLine();
-		iTween.ScaleTo(longStartObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
+		transTime = startTime - NoteCreator.gameTime + 1.0f;
+		iTween.ScaleTo(longStartObj,iTween.Hash("x",1.0f,"y",1.0f,"time",transTime,"easeType","easeOutSine"));
 		lineStartPos = gameObject.transform.localPosition;
 		lineEndPos = new Vector3(0,3.6f,0);
 		updateLineWidth();
@@ -61,9 +63,10 @@ public class LongNote : MonoBehaviour {
 				longEndObj.transform.parent = gameObject.transform; // 親をNoteLongとする
 				longEndObj.GetComponent<NoteMove>().laneValue = lane;
 				longEndObj.GetComponent<NoteMove>().idealTime = endTime;
+				transTime = endTime - NoteCreator.gameTime + 1.0f;
 				isCreateEnd = true; // 終点生成フラグON
 				updateLineWidth1();
-				iTween.ScaleTo(longEndObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
+				iTween.ScaleTo(longEndObj,iTween.Hash("x",1.0f,"y",1.0f,"time",transTime,"easeType","easeOutSine"));
 			}
 			updateLinePosition(lineStartPos , longEndObj.transform.position ); // 線の描画(始点の座標と終点の座標間に描画)
 		}else{ // まだ終点が来てなかったら
@@ -88,7 +91,7 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void updateLineWidth(){ // 線の幅を時間ごとに変化させる
-		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", (1.5f/2.0f),"onUpdate", "updateWidth","onupdatetarget", gameObject));
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", transTime,"onUpdate", "updateWidth","onupdatetarget", gameObject,"easeType","easeOutSine"));
 	}
 
 	private void updateWidth(float width){
@@ -96,8 +99,7 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void updateLineWidth1(){ // 線の幅を時間ごとに変化させる
-		float time = endTime - startTime + 0.5f;
-		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", (1.5f/2.0f),"onUpdate", "updateWidth1","onupdatetarget", gameObject));
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", transTime,"onUpdate", "updateWidth1","onupdatetarget", gameObject,"easeType","easeOutSine"));
 	}
 
 	private void updateWidth1(float width){
@@ -223,7 +225,7 @@ public class LongNote : MonoBehaviour {
 				generateEffect(1);
 			}
 		}else{
-			lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
+			lineStartPos = gameObject.transform.position + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
 		}
 
 		if(nowTime >= endTime){ // 終点のある時刻となったら終点を離す
