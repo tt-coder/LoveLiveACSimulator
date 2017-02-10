@@ -24,7 +24,7 @@ public class LongNote : MonoBehaviour {
 	private bool isCreateEnd = false;
 	private bool isStartDestroy = false;
 	// ライン
-	public Material lineMaterial1;
+	public Material lineMaterial1,lineMaterial2;
 	private LineRenderer longLine;
 	private Vector3 lineStartPos, lineEndPos, lineStartOffset = new Vector3(-0.13f,0,0), lineEndOffset;
 	private float[] lineOffsetX = new float[9] {-0.13f,-0.13f,-0.095f,-0.05f,0,0.05f,0.095f,0.13f,0.13f};
@@ -63,6 +63,7 @@ public class LongNote : MonoBehaviour {
 				longEndObj.transform.parent = gameObject.transform; // 親をNoteLongとする
 				longEndObj.GetComponent<NoteMove>().laneValue = lane;
 				longEndObj.GetComponent<NoteMove>().idealTime = endTime;
+				longEndObj.GetComponent<SpriteRenderer>().sortingLayerName = "Notes";
 				transTime = endTime - NoteCreator.gameTime + 1.0f;
 				isCreateEnd = true; // 終点生成フラグON
 				updateLineWidth1();
@@ -152,6 +153,7 @@ public class LongNote : MonoBehaviour {
 			if(isStartDestroy == false){
 				isStartDestroy = true;
 				Destroy(longStartObj);
+				longLine.material = lineMaterial2;
 				lineStartPos = new Vector3(effectRingPosX[lane],effectRingPosY[lane],0f);
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;
@@ -217,6 +219,7 @@ public class LongNote : MonoBehaviour {
 			if(isStartDestroy == false){
 				isStartDestroy = true; // 始点を押す
 				Destroy(longStartObj);
+				longLine.material = lineMaterial2;
 				lineStartPos = new Vector3(effectRingPosX[lane],effectRingPosY[lane],0f);
 				NoteCreator.nextNoteValue[lane]++;
 				StatusManager.noteCount[0]++;

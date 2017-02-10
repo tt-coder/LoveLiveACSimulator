@@ -105,7 +105,7 @@ public class NoteCreator : MonoBehaviour {
 
     private void playAudio(){
         audioSource = gameObject.GetComponent<AudioSource>();
-        //audioSource.time = 2.1f;
+        audioSource.time = 2.1f;
 		audioSource.Play();
         audioClip = audioSource.clip;
         StatusManager.audioLength = audioClip.length;
