@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LongNote : MonoBehaviour {
 	// Common
+	public int laneValue;
 	private int lane;
 	public int laneIndexStart,laneIndexEnd;
 	private float posX,posY,distance,distanceEval;
@@ -30,7 +31,7 @@ public class LongNote : MonoBehaviour {
 	// エフェクト
 	private float[] effectRingPosX = new float[9] {-7.65f,-7.0677f,-5.4094f,-2.928f,0f,2.928f,5.4094f,7.0677f,7.65f};
 	private float[] effectRingPosY = new float[9] {3.6f,0.672f,-1.809f,-3.468f,-4.05f,-3.468f,-1.809f,0.672f,3.6f};
-	public GameObject judgeEffect;
+	public GameObject[] judgeEffect = new GameObject[4];
 	private GameObject judgeEffectObj;
 
 	void Start () {
@@ -43,12 +44,12 @@ public class LongNote : MonoBehaviour {
 		createLine();
 		iTween.ScaleTo(longStartObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
 		lineStartPos = gameObject.transform.localPosition;
-		lineEndPos = new Vector3(0f,3.6f,0f);
+		lineEndPos = new Vector3(0,3.6f,0);
 		updateLineWidth();
 	}
 	
 	void Update () {
-		//autoDelete();
+		autoDelete();
 		detectionKeyInput();
 		createLongEnd();
 	}
@@ -59,6 +60,7 @@ public class LongNote : MonoBehaviour {
 				longEndObj = Instantiate(longNoteEnd, new Vector3(0, 3.6f, 0), Quaternion.identity) as GameObject; // 終点を生成
 				longEndObj.transform.parent = gameObject.transform; // 親をNoteLongとする
 				longEndObj.GetComponent<NoteMove>().laneValue = lane;
+				longEndObj.GetComponent<NoteMove>().idealTime = endTime;
 				isCreateEnd = true; // 終点生成フラグON
 				updateLineWidth1();
 				iTween.ScaleTo(longEndObj,iTween.Hash("x",1.0f,"y",1.0f,"time",1.0f,"easeType","easeOutSine"));
@@ -95,7 +97,7 @@ public class LongNote : MonoBehaviour {
 
 	private void updateLineWidth1(){ // 線の幅を時間ごとに変化させる
 		float time = endTime - startTime + 0.5f;
-		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", 0.6f,"onUpdate", "updateWidth1","onupdatetarget", gameObject));
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.2f, "time", (1.5f/2.0f),"onUpdate", "updateWidth1","onupdatetarget", gameObject));
 	}
 
 	private void updateWidth1(float width){
@@ -117,7 +119,25 @@ public class LongNote : MonoBehaviour {
 
 	private bool keyCheck(){
 		for(int i=0;i<9;i++){
-			if(Input.GetKey(key[i]) && lane == i){
+			if(Input.GetKeyDown(key[i]) && lane == i){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private bool keyDownCheck(){
+		for(int i=0;i<9;i++){
+			if(Input.GetKeyDown(key[i]) && lane == i){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private bool keyUpCheck(){
+		for(int i=0;i<9;i++){
+			if(Input.GetKeyUp(key[i]) && lane == i){
 				return true;
 			}
 		}
@@ -126,6 +146,37 @@ public class LongNote : MonoBehaviour {
 
 	private void detectionKeyInput(){
 		nowTime = NoteCreator.gameTime - 1.0f;
+		if(keyDownCheck() && NoteCreator.nextNoteValue[lane] == laneIndexStart && isNoteDistance()){
+			if(isStartDestroy == false){
+				isStartDestroy = true;
+				Destroy(longStartObj);
+				lineStartPos = new Vector3(effectRingPosX[lane],effectRingPosY[lane],0f);
+				NoteCreator.nextNoteValue[lane]++;
+				StatusManager.noteCount[0]++;
+				timeLag = Mathf.Abs(nowTime - startTime);
+				judgeTimeLag(timeLag, "start");
+			}
+		}else{
+			if(isStartDestroy){
+				if(keyUpCheck() && NoteCreator.nextNoteValue[lane] == laneIndexEnd && isNoteDistance()){
+					Destroy(gameObject);
+					NoteCreator.nextNoteValue[lane]++;
+					StatusManager.noteCount[0]++;
+					timeLag = Mathf.Abs(nowTime - endTime);
+					judgeTimeLag(timeLag,"end");
+				}
+			}else{
+				lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
+			}
+			if(nowTime - (10f/60f) >= startTime && isStartDestroy == false){
+				Destroy(gameObject);
+				NoteCreator.nextNoteValue[lane]+=2; // 始点と終点の分
+				StatusManager.noteCount[0]++;
+				StatusManager.noteCount[5]++;
+				StatusManager.combo = 0;
+			}
+		}
+		/*
 		if(keyCheck() && NoteCreator.nextNoteValue[lane] == laneIndexStart && isNoteDistance()){ // 始点を押した時の判定
 			if(isStartDestroy == false){ // まだ始点が押されていなかったら
 				isStartDestroy = true;
@@ -155,6 +206,7 @@ public class LongNote : MonoBehaviour {
 				judgeTimeLag(timeLag,"end");
 			}
 		}
+		*/
 	}
 
 	private void autoDelete(){
@@ -168,6 +220,7 @@ public class LongNote : MonoBehaviour {
 				StatusManager.noteCount[0]++;
 				StatusManager.noteCount[1]++;
 				StatusManager.combo++;
+				generateEffect(1);
 			}
 		}else{
 			lineStartPos = gameObject.transform.localPosition + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
@@ -179,6 +232,7 @@ public class LongNote : MonoBehaviour {
 			StatusManager.noteCount[1]++;
 			StatusManager.combo++;
 			Destroy(gameObject);
+			generateEffect(1);
 		}
 	}
 
@@ -205,8 +259,11 @@ public class LongNote : MonoBehaviour {
 		}
 	}
 
-	private void displayJudgeEffect(){
-		judgeEffectObj = Instantiate(judgeEffect, new Vector3(effectRingPosX[2], effectRingPosY[2], 0), Quaternion.identity) as GameObject;
-		iTween.ScaleTo(judgeEffectObj, iTween.Hash("x",0.4f,"y",0.4f,"time",0.1f,"onComplete","deleteEffect"));
+	private void generateEffect(int judge){
+		switch(judge){
+			default:
+				judgeEffectObj = Instantiate(judgeEffect[0], new Vector3(effectRingPosX[lane], effectRingPosY[lane] , 0), Quaternion.identity) as GameObject;
+				break;
+		}
 	}
 }

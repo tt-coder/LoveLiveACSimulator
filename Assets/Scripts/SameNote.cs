@@ -23,7 +23,7 @@ public class SameNote : MonoBehaviour {
 	// エフェクト
 	private float[] effectRingPosX = new float[9] {-7.65f,-7.0677f,-5.4094f,-2.928f,0f,2.928f,5.4094f,7.0677f,7.65f};
 	private float[] effectRingPosY = new float[9] {3.6f,0.672f,-1.809f,-3.468f,-4.05f,-3.468f,-1.809f,0.672f,3.6f};
-	public GameObject judgeEffect;
+	public GameObject[] judgeEffect = new GameObject[4];
 	private GameObject judgeEffectObj;
 
 	void Start () {
@@ -113,6 +113,7 @@ public class SameNote : MonoBehaviour {
 		if(lag <= perfectArea){
 			StatusManager.noteCount[1]++;
 			StatusManager.combo++;
+			generateEffect(1);
 		}else if(lag <= perfectArea + greatArea){
 			StatusManager.noteCount[2]++;
 			StatusManager.combo++;
@@ -129,8 +130,12 @@ public class SameNote : MonoBehaviour {
 		}
 	}
 
-	private void displayJudgeEffect(){
-		judgeEffectObj = Instantiate(judgeEffect, new Vector3(effectRingPosX[2], effectRingPosY[2], 0), Quaternion.identity) as GameObject;
-		iTween.ScaleTo(judgeEffectObj, iTween.Hash("x",0.4f,"y",0.4f,"time",0.1f,"onComplete","deleteEffect"));
+	private void generateEffect(int judge){
+		switch(judge){
+			default:
+				judgeEffectObj = Instantiate(judgeEffect[0], new Vector3(effectRingPosX[lane], effectRingPosY[lane] , 0), Quaternion.identity) as GameObject;
+				break;
+		}
 	}
+
 }

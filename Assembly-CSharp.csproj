@@ -47,6 +47,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\AudioController.cs" />
+     <Compile Include="Assets\Scripts\AnimeContoller.cs" />
+     <Compile Include="Assets\Scripts\AnimeTest.cs" />
      <Compile Include="Assets\Scripts\KeyInputTest.cs" />
      <Compile Include="Assets\Scripts\LongNote.cs" />
      <Compile Include="Assets\Scripts\NoteCreator.cs" />
