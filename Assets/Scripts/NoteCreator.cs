@@ -68,7 +68,7 @@ public class NoteCreator : MonoBehaviour {
     }
 
     private void analyzeCSV(){
-        notesTime[0] = 0;
+        notesTime[0] = 0.5f;
         i = 0;
         p = 1;
         int countNote = 0;
@@ -105,7 +105,7 @@ public class NoteCreator : MonoBehaviour {
 
     private void playAudio(){
         audioSource = gameObject.GetComponent<AudioSource>();
-        //audioSource.time = 2.1f;
+        //audioSource.time = 0.1f;
 		audioSource.Play();
         audioClip = audioSource.clip;
         StatusManager.audioLength = audioClip.length;
