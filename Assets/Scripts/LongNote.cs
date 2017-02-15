@@ -67,7 +67,7 @@ public class LongNote : MonoBehaviour {
 				transTimeEnd = endTime - NoteCreator.gameTime + 1.0f;
 				isCreateEnd = true; // 終点生成フラグON
 				updateLineWidth1();
-				iTween.ScaleTo(longEndObj,iTween.Hash("x",1.0f,"y",1.0f,"time",transTimeEnd,"easeType","easeOutSine"));
+				iTween.ScaleTo(longEndObj,iTween.Hash("x",0.8f,"y",0.8f,"time",transTimeEnd,"easeType","easeOutSine"));
 			}
 			float posX = longEndObj.transform.position.x;
 			float posY = longEndObj.transform.position.y;
@@ -102,7 +102,7 @@ public class LongNote : MonoBehaviour {
 	}
 
 	private void updateLineWidth1(){ // 線の幅を時間ごとに変化させる
-		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",1.0f, "time", transTimeEnd,"onUpdate", "updateWidth1","onupdatetarget", gameObject,"easeType","easeOutCubic"));
+		iTween.ValueTo(longLineObj, iTween.Hash("from",0f, "to",0.9f, "time", transTimeEnd,"onUpdate", "updateWidth1","onupdatetarget", gameObject,"easeType","easeOutCubic"));
 	}
 
 	private void updateWidth1(float width){
