@@ -34,7 +34,7 @@ public class NoteCreator : MonoBehaviour {
     private int noteImageValue = 0;
     private bool detectSame = false;
 
-    void Start() {
+    void Awake() {
         readCSV();
         analyzeCSV();
         for(i=0;i<9;i++){
