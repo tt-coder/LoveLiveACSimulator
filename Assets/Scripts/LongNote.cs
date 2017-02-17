@@ -231,7 +231,7 @@ public class LongNote : MonoBehaviour {
 				StatusManager.combo++;
 				generateEffect(1);
 			}
-		}else{
+		}else{ // 始点の座標をボタンの位置へ
 			float posX = gameObject.transform.localPosition.x;
 			float posY = gameObject.transform.localPosition.y;
 			lineStartPos = new Vector3(posX,posY,0f) + new Vector3(lineOffsetX[lane],lineOffsetY[lane],0f);
